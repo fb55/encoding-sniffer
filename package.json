@@ -1,0 +1,11 @@
+{
+  "name": "encoding-sniffer",
+  "version": "0.0.0",
+  "description": "Implementation of the HTML encoding sniffer algo, with stream support",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Felix Boehm <me@feedic.com>",
+  "license": "MIT"
+}
