@@ -37,8 +37,10 @@ const enum State {
 
   BeforeAttribute,
 
-  // Attributes in meta tag — we compare them to our set here, and back out
-  // We care about four attributes: http-equiv, content-type, content, charset
+  /*
+   * Attributes in meta tag — we compare them to our set here, and back out
+   * We care about four attributes: http-equiv, content-type, content, charset
+   */
   MetaAttribHttpEquiv,
   // The value has to be `content-type`
   MetaAttribHttpEquivValue,
@@ -580,14 +582,11 @@ export class Sniffer {
   }
 
   private handleAttributeValue() {
-    switch (this.attribType) {
-      case AttribType.Charset: {
-        this.setResult(
-          String.fromCharCode(...this.attributeValue),
-          ResultType.META_TAG
-        );
-        break;
-      }
+    if (this.attribType === AttribType.Charset) {
+      this.setResult(
+        String.fromCharCode(...this.attributeValue),
+        ResultType.META_TAG
+      );
     }
   }
 
@@ -872,7 +871,8 @@ export class Sniffer {
         this.stateBeforeAttributeValue(c);
       } else if (this.state === State.AttributeValueQuoted) {
         this.stateAttributeValueQuoted(c);
-      } else if (this.state === State.AttributeValueUnquoted) {
+      } else {
+        // (this.state === State.AttributeValueUnquoted)
         this.stateAttributeValueUnquoted(c);
       }
 
