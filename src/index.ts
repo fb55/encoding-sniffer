@@ -7,7 +7,6 @@ const enum State {
     BOM16BE,
     BOM16LE,
     BOM8,
-    BOM8End,
     // XML prefix
     UTF16LE_XML_PREFIX,
     BeginLT,
@@ -68,7 +67,7 @@ const enum State {
     AttributeValueUnquoted,
 }
 
-const enum ResultType {
+export enum ResultType {
     // Byte order mark
     BOM = 0,
     // User- or network-defined
@@ -79,6 +78,8 @@ const enum ResultType {
     META_TAG = 3,
     // XML encoding
     XML_ENCODING = 4,
+    // Default
+    DEFAULT = 5,
 }
 
 const enum AttribType {
@@ -104,6 +105,10 @@ const enum Chars {
     EQUALS = 0x3d,
     GT = 0x3e,
     QUESTION = 0x3f,
+    UpperA = 0x41,
+    UpperZ = 0x5a,
+    LowerA = 0x61,
+    LowerZ = 0x7a,
 }
 
 const SPACE_CHARACTERS = new Set([Chars.SPACE, Chars.LF, Chars.CR, Chars.TAB]);
@@ -124,9 +129,10 @@ function toUint8Array(str: string) {
     return arr;
 }
 
-const SNIFF_BUFFER_SIZE = 1024;
-
-const STRINGS = {
+export const STRINGS = {
+    UTF8_BOM: new Uint8Array([0xef, 0xbb, 0xbf]),
+    UTF16LE_BOM: new Uint8Array([0xff, 0xfe]),
+    UTF16BE_BOM: new Uint8Array([0xfe, 0xff]),
     UTF16LE_XML_PREFIX: new Uint8Array([0x3c, 0x0, 0x3f, 0x0, 0x78, 0x0]),
     UTF16BE_XML_PREFIX: new Uint8Array([0x0, 0x3c, 0x0, 0x3f, 0x0, 0x78]),
     XML_DECLARATION: toUint8Array("<?xml"),
@@ -141,14 +147,42 @@ const STRINGS = {
 };
 
 function isAsciiAlpha(c: number) {
-    return (c >= 0x41 && c <= 0x5a) || (c >= 0x61 && c <= 0x7a);
+    return (
+        (c >= Chars.UpperA && c <= Chars.UpperZ) ||
+        (c >= Chars.LowerA && c <= Chars.LowerZ)
+    );
 }
 
 function isQuote(c: number) {
     return c === Chars.DQUOTE || c === Chars.SQUOTE;
 }
 
+export interface SnifferOptions {
+    /**
+     * The maximum number of bytes to sniff.
+     *
+     * @default 1024
+     */
+    maxBytes?: number;
+    /**
+     * The encoding specified by the user.
+     */
+    userEncoding?: string;
+    /**
+     * The encoding specified by the transport layer.
+     */
+    networkEncoding?: string;
+    /**
+     * The default encoding to use.
+     *
+     * @default "windows-1252"
+     */
+    defaultEncoding?: string;
+}
+
 export class Sniffer {
+    /** The maximum number of bytes to sniff. */
+    readonly maxBytes: number;
     /** All buffers we have looked at. */
     buffers: Uint8Array[] = [];
     /** The index of the buffer we are currently looking at. */
@@ -157,6 +191,8 @@ export class Sniffer {
     offset = 0;
     /** The index within the current buffer. */
     index = 0;
+
+    private state = State.Begin;
     private sectionIndex = 0;
     private attribType = AttribType.None;
     private gotPragma = false;
@@ -164,30 +200,47 @@ export class Sniffer {
 
     private inMetaTag = false;
 
-    encoding: string | null = null;
-    resultType: ResultType | null = null;
+    public encoding = "windows-1252";
+    public resultType = ResultType.DEFAULT;
 
     private setResult(encoding: string, type: ResultType) {
         // TODO validate result is a valid encoding
-        if (this.resultType === null || this.resultType > type) {
+        if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
             this.encoding = encoding.trim();
             this.resultType = type;
         }
     }
 
-    state = State.Begin;
+    constructor({
+        maxBytes = 1024,
+        userEncoding,
+        networkEncoding,
+        defaultEncoding = "windows-1252",
+    }: SnifferOptions = {}) {
+        this.maxBytes = maxBytes;
 
-    write(buffer: Uint8Array) {
+        this.setResult(defaultEncoding, ResultType.DEFAULT);
+
+        if (userEncoding) {
+            this.setResult(userEncoding, ResultType.PASSED);
+        }
+        if (networkEncoding) {
+            this.setResult(networkEncoding, ResultType.PASSED);
+        }
+    }
+
+    public write(buffer: Uint8Array) {
         this.buffers.push(buffer);
         this.process();
     }
 
     stateBegin(c: number) {
-        if (c === 0xfe) {
+        if (c === STRINGS.UTF16BE_BOM[0]) {
             this.state = State.BOM16BE;
-        } else if (c === 0xff) {
+        } else if (c === STRINGS.UTF16LE_BOM[0]) {
             this.state = State.BOM16LE;
-        } else if (c === 0xef) {
+        } else if (c === STRINGS.UTF8_BOM[0]) {
+            this.sectionIndex = 1;
             this.state = State.BOM8;
         } else if (c === Chars.NIL) {
             this.state = State.UTF16BE_XML_PREFIX;
@@ -240,7 +293,7 @@ export class Sniffer {
     }
 
     stateBOM16LE(c: number) {
-        if (c === 0xfe) {
+        if (c === STRINGS.UTF16LE_BOM[1]) {
             this.setResult("utf-16le", ResultType.BOM);
         } else {
             this.state = State.BeforeTag;
@@ -249,7 +302,7 @@ export class Sniffer {
     }
 
     stateBOM16BE(c: number) {
-        if (c === 0xff) {
+        if (c === STRINGS.UTF16BE_BOM[1]) {
             this.setResult("utf-16be", ResultType.BOM);
         } else {
             this.state = State.BeforeTag;
@@ -258,20 +311,10 @@ export class Sniffer {
     }
 
     stateBOM8(c: number) {
-        if (c === 0xbb) {
-            this.state = State.BOM8End;
-        } else {
-            this.state = State.BeforeTag;
-            this.stateBeforeTag();
-        }
-    }
-
-    stateBOM8End(c: number) {
-        if (c === 0xbf) {
-            this.setResult("utf-8", ResultType.BOM);
-        } else {
-            this.state = State.BeforeTag;
-            this.stateBeforeTag();
+        if (this.advanceSection(STRINGS.UTF8_BOM, c)) {
+            if (this.sectionIndex === STRINGS.UTF8_BOM.length) {
+                this.setResult("utf-8", ResultType.BOM);
+            }
         }
     }
 
@@ -333,7 +376,7 @@ export class Sniffer {
     }
 
     stateCommentStart(c: number) {
-        if (this.advanceSection(STRINGS.COMMENT_END, c)) {
+        if (this.advanceSection(STRINGS.COMMENT_START, c)) {
             if (this.sectionIndex === STRINGS.COMMENT_START.length) {
                 this.state = State.CommentEnd;
                 // The -- of the comment start can be part of the end.
@@ -350,6 +393,12 @@ export class Sniffer {
             if (this.sectionIndex === STRINGS.COMMENT_END.length) {
                 this.state = State.BeforeTag;
             }
+        } else if (c === Chars.DASH) {
+            /*
+             * If we are here, we know we expected a `>` above.
+             * Set this to 2, to support many dashes before the closing `>`.
+             */
+            this.sectionIndex = 2;
         }
     }
 
@@ -392,8 +441,7 @@ export class Sniffer {
 
     stateTagNameMeta(c: number) {
         if (this.sectionIndex < STRINGS.META.length) {
-            if (!this.advanceSectionIC(STRINGS.META, c)) {
-                this.state = State.BeforeAttribute;
+            if (this.advanceSectionIC(STRINGS.META, c)) {
                 return;
             }
         } else if (SPACE_CHARACTERS.has(c)) {
@@ -479,8 +527,9 @@ export class Sniffer {
     }
 
     stateMetaAttribAfterName(c: number) {
-        if (SPACE_CHARACTERS.has(c)) {
+        if (SPACE_CHARACTERS.has(c) || c === Chars.EQUALS) {
             this.state = State.AfterAttributeName;
+            this.stateAfterAttributeName(c);
         } else {
             this.state = State.AnyAttribName;
             this.stateAnyAttribName(c);
@@ -555,6 +604,7 @@ export class Sniffer {
                     this.gotPragma = true;
                 }
 
+                this.state = State.BeforeAttribute;
                 return;
             }
         } else if (this.advanceSectionIC(STRINGS.CONTENT_TYPE, c)) {
@@ -638,6 +688,7 @@ export class Sniffer {
             this.stateAttributeValueUnquoted(c);
         } else {
             this.state = State.MetaContentValueUnquotedValueUnquoted;
+            this.stateMetaContentValueUnquotedValueUnquoted(c);
         }
     }
 
@@ -789,7 +840,7 @@ export class Sniffer {
     }
 
     process() {
-        while (this.offset + this.index < SNIFF_BUFFER_SIZE) {
+        while (this.offset + this.index < this.maxBytes) {
             const c = this.buffers[this.bufferIndex][this.index];
 
             if (this.state === State.Begin) {
@@ -800,8 +851,6 @@ export class Sniffer {
                 this.stateBOM16LE(c);
             } else if (this.state === State.BOM8) {
                 this.stateBOM8(c);
-            } else if (this.state === State.BOM8End) {
-                this.stateBOM8End(c);
             } else if (this.state === State.UTF16LE_XML_PREFIX) {
                 this.stateUTF16LE_XML_PREFIX(c);
             } else if (this.state === State.BeginLT) {
@@ -894,6 +943,8 @@ export class Sniffer {
             }
 
             if (++this.index >= this.buffers[this.bufferIndex].length) {
+                this.offset += this.buffers[this.bufferIndex].length;
+                this.index = 0;
                 if (++this.bufferIndex === this.buffers.length) {
                     return;
                 }
