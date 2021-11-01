@@ -70,7 +70,7 @@ const enum State {
 export enum ResultType {
     // Byte order mark
     BOM = 0,
-    // User- or network-defined
+    // User- or transport layer-defined
     PASSED = 1,
     // XML prefixes
     XML_PREFIX = 2,
@@ -171,7 +171,7 @@ export interface SnifferOptions {
     /**
      * The encoding specified by the transport layer.
      */
-    networkEncoding?: string;
+    transportLayerEncodingLabel?: string;
     /**
      * The default encoding to use.
      *
@@ -214,18 +214,20 @@ export class Sniffer {
     constructor({
         maxBytes = 1024,
         userEncoding,
-        networkEncoding,
-        defaultEncoding = "windows-1252",
+        transportLayerEncodingLabel,
+        defaultEncoding,
     }: SnifferOptions = {}) {
         this.maxBytes = maxBytes;
-
-        this.setResult(defaultEncoding, ResultType.DEFAULT);
 
         if (userEncoding) {
             this.setResult(userEncoding, ResultType.PASSED);
         }
-        if (networkEncoding) {
-            this.setResult(networkEncoding, ResultType.PASSED);
+        if (transportLayerEncodingLabel) {
+            this.setResult(transportLayerEncodingLabel, ResultType.PASSED);
+        }
+
+        if (defaultEncoding) {
+            this.setResult(defaultEncoding, ResultType.DEFAULT);
         }
     }
 
