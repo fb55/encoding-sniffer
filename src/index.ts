@@ -1,3 +1,5 @@
+import { labelToName } from "whatwg-encoding";
+
 // https://html.spec.whatwg.org/multipage/syntax.html#prescan-a-byte-stream-to-determine-its-encoding
 
 const enum State {
@@ -180,6 +182,8 @@ export interface SnifferOptions {
     defaultEncoding?: string;
 }
 
+const X_USER_DEFINED = /^\s*x-user-defined\s*$/i;
+
 export class Sniffer {
     /** The maximum number of bytes to sniff. */
     readonly maxBytes: number;
@@ -203,11 +207,29 @@ export class Sniffer {
     public encoding = "windows-1252";
     public resultType = ResultType.DEFAULT;
 
-    private setResult(encoding: string, type: ResultType) {
-        // TODO validate result is a valid encoding
+    private setResult(label: string, type: ResultType) {
         if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
-            this.encoding = encoding.trim();
-            this.resultType = type;
+            let encoding = labelToName(label);
+
+            if (encoding) {
+                if (
+                    (type === ResultType.XML_ENCODING ||
+                        type === ResultType.META_TAG) &&
+                    (encoding === "UTF-16LE" || encoding === "UTF-16BE")
+                ) {
+                    encoding = "UTF-8";
+                }
+
+                this.encoding = encoding;
+                this.resultType = type;
+            } else if (
+                // `whatwg-encoding` doesn't support x-user-defined; handle this here.
+                type === ResultType.META_TAG &&
+                X_USER_DEFINED.test(label)
+            ) {
+                this.encoding = "windows-1252";
+                this.resultType = type;
+            }
         }
     }
 

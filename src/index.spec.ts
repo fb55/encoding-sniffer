@@ -10,49 +10,49 @@ describe("Sniffer", () => {
     it("should recognize XML ", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from(XML_ENCODING));
-        expect(sniffer.encoding).toBe("utf-16");
+        expect(sniffer.encoding).toBe("UTF-8");
         expect(sniffer.resultType).toBe(ResultType.XML_ENCODING);
     });
 
     it("should recognize HTML meta tag charset, lower", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from(META_CHARSET));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should recognize HTML meta tag charset, upper", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from(META_CHARSET.toUpperCase()));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should recognize HTML meta tag charset, quoted", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from("<Meta Charset  =  ' ISO-8859-2 '>"));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should recognize HTML meta tag http-equiv, lower", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from(META_CONTENT));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should recognize HTML meta tag http-equiv, upper", () => {
         const sniffer = new Sniffer();
         sniffer.write(Buffer.from(META_CONTENT.toUpperCase()));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should recognize HTML meta tag http-equiv, byte-by-byte", () => {
         const sniffer = new Sniffer();
         META_CONTENT.split("").forEach((c) => sniffer.write(Buffer.from(c)));
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
@@ -70,9 +70,9 @@ describe("Sniffer", () => {
         sniffer.write(
             Buffer.from(`${XML_ENCODING}<foo></foo> <bar baz><! ><!-- 
             foo --><mEtA foo=bar boo="hoo" content ="charsetsomethingcchArset  
-            =\t' iso-8859-1';other" http-EQUIV = contenT-tYpe>${META_CONTENT}`)
+            =\t'  windows-1254';other" http-EQUIV = contenT-tYpe>${META_CONTENT}`)
         );
-        expect(sniffer.encoding).toBe("iso-8859-1");
+        expect(sniffer.encoding).toBe("windows-1254");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
@@ -80,10 +80,10 @@ describe("Sniffer", () => {
         const sniffer = new Sniffer();
         sniffer.write(
             Buffer.from(
-                "<!---><meta http-equiv='content-type' content='CHARSET=iso-8859-2'>"
+                "<!---><meta http-equiv='content-type' content='CHARSET=x-user-defined'>"
             )
         );
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("windows-1252");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
@@ -91,45 +91,45 @@ describe("Sniffer", () => {
         const sniffer = new Sniffer();
         sniffer.write(
             Buffer.from(
-                "<!--><meta http-equiv='content-type' content=CHARSET='iso-8859-2'>"
+                "<!--><meta http-equiv='content-type' content=CHARSET='UTF-16BE'>"
             )
         );
-        expect(sniffer.encoding).toBe("iso-8859-2");
+        expect(sniffer.encoding).toBe("UTF-8");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
     it("should support XML UTF-16LE prefixes", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF16LE_XML_PREFIX);
-        expect(sniffer.encoding).toBe("utf-16le");
+        expect(sniffer.encoding).toBe("UTF-16LE");
         expect(sniffer.resultType).toBe(ResultType.XML_PREFIX);
     });
 
     it("should support XML UTF-16BE prefixes", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF16BE_XML_PREFIX);
-        expect(sniffer.encoding).toBe("utf-16be");
+        expect(sniffer.encoding).toBe("UTF-16BE");
         expect(sniffer.resultType).toBe(ResultType.XML_PREFIX);
     });
 
     it("should support UTF-8 BOMs", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF8_BOM);
-        expect(sniffer.encoding).toBe("utf-8");
+        expect(sniffer.encoding).toBe("UTF-8");
         expect(sniffer.resultType).toBe(ResultType.BOM);
     });
 
     it("should support UTF-16LE BOMs", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF16LE_BOM);
-        expect(sniffer.encoding).toBe("utf-16le");
+        expect(sniffer.encoding).toBe("UTF-16LE");
         expect(sniffer.resultType).toBe(ResultType.BOM);
     });
 
     it("should support UTF-16BE BOMs", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF16BE_BOM);
-        expect(sniffer.encoding).toBe("utf-16be");
+        expect(sniffer.encoding).toBe("UTF-16BE");
         expect(sniffer.resultType).toBe(ResultType.BOM);
     });
 });
