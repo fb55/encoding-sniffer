@@ -5,9 +5,9 @@
  * See __fixtures__/LICENSE.txt for full license terms.
  */
 
-import assert from "assert";
-import fs from "fs";
-import path from "path";
+import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
 import { getEncoding as htmlEncodingSniffer } from "./index.js";
 
 function read(relative: string): Uint8Array {

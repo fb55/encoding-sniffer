@@ -51,7 +51,7 @@ describe("Sniffer", () => {
 
     it("should recognize HTML meta tag http-equiv, byte-by-byte", () => {
         const sniffer = new Sniffer();
-        META_CONTENT.split("").forEach((c) => sniffer.write(Buffer.from(c)));
+        for (const c of META_CONTENT) sniffer.write(Buffer.from(c));
         expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });

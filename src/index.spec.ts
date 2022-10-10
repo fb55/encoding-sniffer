@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { setTimeout } from "node:timers/promises";
 
 function getStream(stream: NodeJS.ReadableStream): Promise<string> {
-    // TODO[engines.node>=18]: Use `reduce`
+    // TODO[engines.node@>=18]: Use `reduce`
     return new Promise((resolve, reject) => {
         let data = "";
         stream.on("data", (chunk) => (data += chunk));
@@ -41,10 +41,10 @@ describe("DecodeStream", () => {
         );
         const stream = new DecodeStream();
         const collector = getStream(stream);
-        for (let i = 0; i < file.length; i++) {
+        for (let index = 0; index < file.length; index++) {
             // Wait for a bit to allow the stream to process the data.
             await setTimeout(0);
-            stream.write(file.slice(i, i + 1));
+            stream.write(file.slice(index, index + 1));
         }
         stream.end();
         expect(await collector).toMatchSnapshot();

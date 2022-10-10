@@ -122,7 +122,7 @@ const END_OF_UNQUOTED_ATTRIBUTE_VALUE = new Set([
     Chars.GT,
 ]);
 
-function toUint8Array(str: string) {
+function toUint8Array(str: string): Uint8Array {
     const arr = new Uint8Array(str.length);
     for (let i = 0; i < str.length; i++) {
         arr[i] = str.charCodeAt(i);
@@ -147,14 +147,14 @@ export const STRINGS = {
     COMMENT_END: toUint8Array("-->"),
 };
 
-function isAsciiAlpha(c: number) {
+function isAsciiAlpha(c: number): boolean {
     return (
         (c >= Chars.UpperA && c <= Chars.UpperZ) ||
         (c >= Chars.LowerA && c <= Chars.LowerZ)
     );
 }
 
-function isQuote(c: number) {
+function isQuote(c: number): boolean {
     return c === Chars.DQUOTE || c === Chars.SQUOTE;
 }
 
@@ -205,7 +205,7 @@ export class Sniffer {
     public encoding = "windows-1252";
     public resultType = ResultType.DEFAULT;
 
-    private setResult(label: string, type: ResultType) {
+    private setResult(label: string, type: ResultType): void {
         if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
             let encoding = labelToName(label);
 
@@ -251,26 +251,43 @@ export class Sniffer {
         }
     }
 
-    private stateBegin(c: number) {
-        if (c === STRINGS.UTF16BE_BOM[0]) {
-            this.state = State.BOM16BE;
-        } else if (c === STRINGS.UTF16LE_BOM[0]) {
-            this.state = State.BOM16LE;
-        } else if (c === STRINGS.UTF8_BOM[0]) {
-            this.sectionIndex = 1;
-            this.state = State.BOM8;
-        } else if (c === Chars.NIL) {
-            this.state = State.UTF16BE_XML_PREFIX;
-            this.sectionIndex = 1;
-        } else if (c === Chars.LT) {
-            this.state = State.BeginLT;
-        } else {
-            this.state = State.BeforeTag;
-            this.stateBeforeTag(c);
+    private stateBegin(c: number): void {
+        switch (c) {
+            case STRINGS.UTF16BE_BOM[0]: {
+                this.state = State.BOM16BE;
+
+                break;
+            }
+            case STRINGS.UTF16LE_BOM[0]: {
+                this.state = State.BOM16LE;
+
+                break;
+            }
+            case STRINGS.UTF8_BOM[0]: {
+                this.sectionIndex = 1;
+                this.state = State.BOM8;
+
+                break;
+            }
+            case Chars.NIL: {
+                this.state = State.UTF16BE_XML_PREFIX;
+                this.sectionIndex = 1;
+
+                break;
+            }
+            case Chars.LT: {
+                this.state = State.BeginLT;
+
+                break;
+            }
+            default: {
+                this.state = State.BeforeTag;
+                this.stateBeforeTag(c);
+            }
         }
     }
 
-    private stateBeginLT(c: number) {
+    private stateBeginLT(c: number): void {
         if (c === Chars.NIL) {
             this.state = State.UTF16LE_XML_PREFIX;
             this.sectionIndex = 2;
@@ -283,7 +300,7 @@ export class Sniffer {
         }
     }
 
-    private stateUTF16BE_XML_PREFIX(c: number) {
+    private stateUTF16BE_XML_PREFIX(c: number): void {
         // Advance position in the section
         if (this.advanceSection(STRINGS.UTF16BE_XML_PREFIX, c)) {
             if (this.sectionIndex === STRINGS.UTF16BE_XML_PREFIX.length) {
@@ -296,7 +313,7 @@ export class Sniffer {
         }
     }
 
-    private stateUTF16LE_XML_PREFIX(c: number) {
+    private stateUTF16LE_XML_PREFIX(c: number): void {
         // Advance position in the section
         if (this.advanceSection(STRINGS.UTF16LE_XML_PREFIX, c)) {
             if (this.sectionIndex === STRINGS.UTF16LE_XML_PREFIX.length) {
@@ -309,7 +326,7 @@ export class Sniffer {
         }
     }
 
-    private stateBOM16LE(c: number) {
+    private stateBOM16LE(c: number): void {
         if (c === STRINGS.UTF16LE_BOM[1]) {
             this.setResult("utf-16le", ResultType.BOM);
         } else {
@@ -318,7 +335,7 @@ export class Sniffer {
         }
     }
 
-    private stateBOM16BE(c: number) {
+    private stateBOM16BE(c: number): void {
         if (c === STRINGS.UTF16BE_BOM[1]) {
             this.setResult("utf-16be", ResultType.BOM);
         } else {
@@ -327,15 +344,16 @@ export class Sniffer {
         }
     }
 
-    private stateBOM8(c: number) {
-        if (this.advanceSection(STRINGS.UTF8_BOM, c)) {
-            if (this.sectionIndex === STRINGS.UTF8_BOM.length) {
-                this.setResult("utf-8", ResultType.BOM);
-            }
+    private stateBOM8(c: number): void {
+        if (
+            this.advanceSection(STRINGS.UTF8_BOM, c) &&
+            this.sectionIndex === STRINGS.UTF8_BOM.length
+        ) {
+            this.setResult("utf-8", ResultType.BOM);
         }
     }
 
-    private stateBeforeTag(c: number) {
+    private stateBeforeTag(c: number): void {
         if (c === Chars.LT) {
             this.state = State.BeforeTagName;
             this.inMetaTag = false;
@@ -353,7 +371,7 @@ export class Sniffer {
      *  - An XML declaration
      *
      */
-    private stateBeforeTagName(c: number) {
+    private stateBeforeTagName(c: number): void {
         if (isAsciiAlpha(c)) {
             if ((c | 0x20) === STRINGS.META[0]) {
                 this.sectionIndex = 1;
@@ -361,29 +379,39 @@ export class Sniffer {
             } else {
                 this.state = State.TagNameOther;
             }
-        } else if (c === Chars.SLASH) {
-            this.state = State.BeforeCloseTagName;
-        } else if (c === Chars.EXCLAMATION) {
-            this.state = State.CommentStart;
-            this.sectionIndex = 2;
-        } else if (c === Chars.QUESTION) {
-            this.state = State.WeirdTag;
-        } else {
-            this.state = State.BeforeTag;
-            this.stateBeforeTag(c);
-        }
+        } else
+            switch (c) {
+                case Chars.SLASH: {
+                    this.state = State.BeforeCloseTagName;
+
+                    break;
+                }
+                case Chars.EXCLAMATION: {
+                    this.state = State.CommentStart;
+                    this.sectionIndex = 2;
+
+                    break;
+                }
+                case Chars.QUESTION: {
+                    this.state = State.WeirdTag;
+
+                    break;
+                }
+                default: {
+                    this.state = State.BeforeTag;
+                    this.stateBeforeTag(c);
+                }
+            }
     }
 
-    private stateBeforeCloseTagName(c: number) {
-        if (isAsciiAlpha(c)) {
-            // Switch to `TagNameOther`; the HTML spec allows attributes here as well.
-            this.state = State.TagNameOther;
-        } else {
-            this.state = State.WeirdTag;
-        }
+    private stateBeforeCloseTagName(c: number): void {
+        this.state = isAsciiAlpha(c)
+            ? // Switch to `TagNameOther`; the HTML spec allows attributes here as well.
+              State.TagNameOther
+            : State.WeirdTag;
     }
 
-    private stateCommentStart(c: number) {
+    private stateCommentStart(c: number): void {
         if (this.advanceSection(STRINGS.COMMENT_START, c)) {
             if (this.sectionIndex === STRINGS.COMMENT_START.length) {
                 this.state = State.CommentEnd;
@@ -396,7 +424,7 @@ export class Sniffer {
         }
     }
 
-    private stateCommentEnd(c: number) {
+    private stateCommentEnd(c: number): void {
         if (this.advanceSection(STRINGS.COMMENT_END, c)) {
             if (this.sectionIndex === STRINGS.COMMENT_END.length) {
                 this.state = State.BeforeTag;
@@ -413,7 +441,7 @@ export class Sniffer {
     /**
      * Any section starting with `<!`, `<?`, `</`, without being a closing tag or comment.
      */
-    private stateWeirdTag(c: number) {
+    private stateWeirdTag(c: number): void {
         if (c === Chars.GT) {
             this.state = State.BeforeTag;
         }
@@ -447,7 +475,7 @@ export class Sniffer {
         return false;
     }
 
-    private stateTagNameMeta(c: number) {
+    private stateTagNameMeta(c: number): void {
         if (this.sectionIndex < STRINGS.META.length) {
             if (this.advanceSectionIC(STRINGS.META, c)) {
                 return;
@@ -465,7 +493,7 @@ export class Sniffer {
         this.stateTagNameOther(c);
     }
 
-    private stateTagNameOther(c: number) {
+    private stateTagNameOther(c: number): void {
         if (SPACE_CHARACTERS.has(c)) {
             this.state = State.BeforeAttribute;
         } else if (c === Chars.GT) {
@@ -473,7 +501,7 @@ export class Sniffer {
         }
     }
 
-    private stateBeforeAttribute(c: number) {
+    private stateBeforeAttribute(c: number): void {
         if (SPACE_CHARACTERS.has(c)) return;
 
         if (this.inMetaTag) {
@@ -489,14 +517,17 @@ export class Sniffer {
             }
         }
 
-        if (c === Chars.SLASH || c === Chars.GT) {
-            this.state = State.BeforeTag;
-        } else {
-            this.state = State.AnyAttribName;
-        }
+        this.state =
+            c === Chars.SLASH || c === Chars.GT
+                ? State.BeforeTag
+                : State.AnyAttribName;
     }
 
-    private handleMetaAttrib(c: number, section: Uint8Array, type: AttribType) {
+    private handleMetaAttrib(
+        c: number,
+        section: Uint8Array,
+        type: AttribType
+    ): void {
         if (this.advanceSectionIC(section, c)) {
             if (this.sectionIndex === section.length) {
                 this.attribType = type;
@@ -508,11 +539,11 @@ export class Sniffer {
         }
     }
 
-    private stateMetaAttribHttpEquiv(c: number) {
+    private stateMetaAttribHttpEquiv(c: number): void {
         this.handleMetaAttrib(c, STRINGS.HTTP_EQUIV, AttribType.HttpEquiv);
     }
 
-    private stateMetaAttribC(c: number) {
+    private stateMetaAttribC(c: number): void {
         const lower = c | 0x20;
         if (lower === STRINGS.CHARSET[1]) {
             this.sectionIndex = 2;
@@ -526,15 +557,15 @@ export class Sniffer {
         }
     }
 
-    private stateMetaAttribCharset(c: number) {
+    private stateMetaAttribCharset(c: number): void {
         this.handleMetaAttrib(c, STRINGS.CHARSET, AttribType.Charset);
     }
 
-    private stateMetaAttribContent(c: number) {
+    private stateMetaAttribContent(c: number): void {
         this.handleMetaAttrib(c, STRINGS.CONTENT, AttribType.Content);
     }
 
-    private stateMetaAttribAfterName(c: number) {
+    private stateMetaAttribAfterName(c: number): void {
         if (SPACE_CHARACTERS.has(c) || c === Chars.EQUALS) {
             this.state = State.AfterAttributeName;
             this.stateAfterAttributeName(c);
@@ -544,7 +575,7 @@ export class Sniffer {
         }
     }
 
-    private stateAnyAttribName(c: number) {
+    private stateAnyAttribName(c: number): void {
         if (SPACE_CHARACTERS.has(c)) {
             this.attribType = AttribType.None;
             this.state = State.AfterAttributeName;
@@ -555,7 +586,7 @@ export class Sniffer {
         }
     }
 
-    private stateAfterAttributeName(c: number) {
+    private stateAfterAttributeName(c: number): void {
         if (SPACE_CHARACTERS.has(c)) return;
 
         if (c === Chars.EQUALS) {
@@ -569,7 +600,7 @@ export class Sniffer {
     private quoteCharacter = 0;
     private attributeValue: number[] = [];
 
-    private stateBeforeAttributeValue(c: number) {
+    private stateBeforeAttributeValue(c: number): void {
         if (SPACE_CHARACTERS.has(c)) return;
 
         this.attributeValue.length = 0;
@@ -599,7 +630,7 @@ export class Sniffer {
     }
 
     // The value has to be `content-type`
-    private stateMetaAttribHttpEquivValue(c: number) {
+    private stateMetaAttribHttpEquivValue(c: number): void {
         if (this.sectionIndex === STRINGS.CONTENT_TYPE.length) {
             if (
                 this.quoteCharacter === 0
@@ -630,7 +661,7 @@ export class Sniffer {
         }
     }
 
-    private handleMetaContentValue() {
+    private handleMetaContentValue(): void {
         if (this.attributeValue.length === 0) return;
 
         const encoding = String.fromCharCode(...this.attributeValue);
@@ -645,7 +676,7 @@ export class Sniffer {
         this.attributeValue.length = 0;
     }
 
-    private handleAttributeValue() {
+    private handleAttributeValue(): void {
         if (this.attribType === AttribType.Charset) {
             this.setResult(
                 String.fromCharCode(...this.attributeValue),
@@ -654,7 +685,7 @@ export class Sniffer {
         }
     }
 
-    private stateAttributeValueUnquoted(c: number) {
+    private stateAttributeValueUnquoted(c: number): void {
         if (SPACE_CHARACTERS.has(c)) {
             this.handleAttributeValue();
             this.state = State.BeforeAttribute;
@@ -666,7 +697,7 @@ export class Sniffer {
         }
     }
 
-    private findMetaContentEncoding(c: number) {
+    private findMetaContentEncoding(c: number): boolean {
         if (this.advanceSectionIC(STRINGS.CHARSET, c)) {
             if (this.sectionIndex === STRINGS.CHARSET.length) {
                 return true;
@@ -678,7 +709,7 @@ export class Sniffer {
         return false;
     }
 
-    private stateMetaContentValueUnquotedBeforeEncoding(c: number) {
+    private stateMetaContentValueUnquotedBeforeEncoding(c: number): void {
         if (END_OF_UNQUOTED_ATTRIBUTE_VALUE.has(c)) {
             this.stateAttributeValueUnquoted(c);
         } else if (this.sectionIndex === STRINGS.CHARSET.length) {
@@ -690,7 +721,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueUnquotedBeforeValue(c: number) {
+    private stateMetaContentValueUnquotedBeforeValue(c: number): void {
         if (isQuote(c)) {
             this.quoteCharacter = c;
             this.state = State.MetaContentValueUnquotedValueQuoted;
@@ -703,7 +734,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueUnquotedValueQuoted(c: number) {
+    private stateMetaContentValueUnquotedValueQuoted(c: number): void {
         if (END_OF_UNQUOTED_ATTRIBUTE_VALUE.has(c)) {
             // Quotes weren't matched, so we're done.
             this.stateAttributeValueUnquoted(c);
@@ -715,7 +746,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueUnquotedValueUnquoted(c: number) {
+    private stateMetaContentValueUnquotedValueUnquoted(c: number): void {
         if (END_OF_UNQUOTED_ATTRIBUTE_VALUE.has(c) || c === Chars.SEMICOLON) {
             this.handleMetaContentValue();
             this.state = State.AttributeValueUnquoted;
@@ -725,7 +756,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueQuotedValueUnquoted(c: number) {
+    private stateMetaContentValueQuotedValueUnquoted(c: number): void {
         if (isQuote(c) || SPACE_CHARACTERS.has(c) || c === Chars.SEMICOLON) {
             this.handleMetaContentValue();
             // We are done with the value, but might not be at the end of the attribute
@@ -736,7 +767,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueQuotedValueQuoted(c: number) {
+    private stateMetaContentValueQuotedValueQuoted(c: number): void {
         if (isQuote(c)) {
             // We have reached the end of our value.
 
@@ -752,7 +783,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueQuotedBeforeEncoding(c: number) {
+    private stateMetaContentValueQuotedBeforeEncoding(c: number): void {
         if (c === this.quoteCharacter) {
             this.stateAttributeValueQuoted(c);
         } else if (this.findMetaContentEncoding(c)) {
@@ -760,7 +791,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueQuotedAfterEncoding(c: number) {
+    private stateMetaContentValueQuotedAfterEncoding(c: number): void {
         if (c === Chars.EQUALS) {
             this.state = State.MetaContentValueQuotedBeforeValue;
         } else if (!SPACE_CHARACTERS.has(c)) {
@@ -770,7 +801,7 @@ export class Sniffer {
         }
     }
 
-    private stateMetaContentValueQuotedBeforeValue(c: number) {
+    private stateMetaContentValueQuotedBeforeValue(c: number): void {
         if (c === this.quoteCharacter) {
             this.stateAttributeValueQuoted(c);
         } else if (isQuote(c)) {
@@ -781,7 +812,7 @@ export class Sniffer {
         }
     }
 
-    private stateAttributeValueQuoted(c: number) {
+    private stateAttributeValueQuoted(c: number): void {
         if (c === this.quoteCharacter) {
             this.handleAttributeValue();
             this.state = State.BeforeAttribute;
@@ -791,7 +822,7 @@ export class Sniffer {
     }
 
     // Read STRINGS.XML_DECLARATION
-    private stateXMLDeclaration(c: number) {
+    private stateXMLDeclaration(c: number): void {
         if (this.advanceSection(STRINGS.XML_DECLARATION, c)) {
             if (this.sectionIndex === STRINGS.XML_DECLARATION.length) {
                 this.sectionIndex = 0;
@@ -802,7 +833,7 @@ export class Sniffer {
         }
     }
 
-    private stateXMLDeclarationBeforeEncoding(c: number) {
+    private stateXMLDeclarationBeforeEncoding(c: number): void {
         if (this.advanceSection(STRINGS.ENCODING, c)) {
             if (this.sectionIndex === STRINGS.ENCODING.length) {
                 this.state = State.XMLDeclarationAfterEncoding;
@@ -815,7 +846,7 @@ export class Sniffer {
         }
     }
 
-    private stateXMLDeclarationAfterEncoding(c: number) {
+    private stateXMLDeclarationAfterEncoding(c: number): void {
         if (c === Chars.EQUALS) {
             this.state = State.XMLDeclarationBeforeValue;
         } else if (c > Chars.SPACE) {
@@ -824,7 +855,7 @@ export class Sniffer {
         }
     }
 
-    private stateXMLDeclarationBeforeValue(c: number) {
+    private stateXMLDeclarationBeforeValue(c: number): void {
         if (isQuote(c)) {
             this.attributeValue.length = 0;
             this.state = State.XMLDeclarationValue;
@@ -834,7 +865,7 @@ export class Sniffer {
         }
     }
 
-    private stateXMLDeclarationValue(c: number) {
+    private stateXMLDeclarationValue(c: number): void {
         if (isQuote(c)) {
             this.setResult(
                 String.fromCharCode(...this.attributeValue),
@@ -850,7 +881,7 @@ export class Sniffer {
         }
     }
 
-    public write(buffer: Uint8Array) {
+    public write(buffer: Uint8Array): void {
         let index = 0;
         for (
             ;
@@ -859,112 +890,220 @@ export class Sniffer {
         ) {
             const c = buffer[index];
 
-            if (this.state === State.Begin) {
-                this.stateBegin(c);
-            } else if (this.state === State.BOM16BE) {
-                this.stateBOM16BE(c);
-            } else if (this.state === State.BOM16LE) {
-                this.stateBOM16LE(c);
-            } else if (this.state === State.BOM8) {
-                this.stateBOM8(c);
-            } else if (this.state === State.UTF16LE_XML_PREFIX) {
-                this.stateUTF16LE_XML_PREFIX(c);
-            } else if (this.state === State.BeginLT) {
-                this.stateBeginLT(c);
-            } else if (this.state === State.UTF16BE_XML_PREFIX) {
-                this.stateUTF16BE_XML_PREFIX(c);
-            } else if (this.state === State.BeforeTag) {
-                // Optimization: Skip all characters until we find a `<`
-                const idx = buffer.indexOf(Chars.LT, index);
+            switch (this.state) {
+                case State.Begin: {
+                    this.stateBegin(c);
 
-                if (idx < 0) {
-                    // We are done with this buffer. Stay in the state and try on the next one.
-                    index = buffer.length;
-                } else {
-                    index = idx;
-                    this.stateBeforeTag(Chars.LT);
+                    break;
                 }
-            } else if (this.state === State.BeforeTagName) {
-                this.stateBeforeTagName(c);
-            } else if (this.state === State.BeforeCloseTagName) {
-                this.stateBeforeCloseTagName(c);
-            } else if (this.state === State.CommentStart) {
-                this.stateCommentStart(c);
-            } else if (this.state === State.CommentEnd) {
-                this.stateCommentEnd(c);
-            } else if (this.state === State.TagNameMeta) {
-                this.stateTagNameMeta(c);
-            } else if (this.state === State.TagNameOther) {
-                this.stateTagNameOther(c);
-            } else if (this.state === State.XMLDeclaration) {
-                this.stateXMLDeclaration(c);
-            } else if (this.state === State.XMLDeclarationBeforeEncoding) {
-                this.stateXMLDeclarationBeforeEncoding(c);
-            } else if (this.state === State.XMLDeclarationAfterEncoding) {
-                this.stateXMLDeclarationAfterEncoding(c);
-            } else if (this.state === State.XMLDeclarationBeforeValue) {
-                this.stateXMLDeclarationBeforeValue(c);
-            } else if (this.state === State.XMLDeclarationValue) {
-                this.stateXMLDeclarationValue(c);
-            } else if (this.state === State.WeirdTag) {
-                this.stateWeirdTag(c);
-            } else if (this.state === State.BeforeAttribute) {
-                this.stateBeforeAttribute(c);
-            } else if (this.state === State.MetaAttribHttpEquiv) {
-                this.stateMetaAttribHttpEquiv(c);
-            } else if (this.state === State.MetaAttribHttpEquivValue) {
-                this.stateMetaAttribHttpEquivValue(c);
-            } else if (this.state === State.MetaAttribC) {
-                this.stateMetaAttribC(c);
-            } else if (this.state === State.MetaAttribContent) {
-                this.stateMetaAttribContent(c);
-            } else if (this.state === State.MetaAttribCharset) {
-                this.stateMetaAttribCharset(c);
-            } else if (this.state === State.MetaAttribAfterName) {
-                this.stateMetaAttribAfterName(c);
-            } else if (
-                this.state === State.MetaContentValueQuotedBeforeEncoding
-            ) {
-                this.stateMetaContentValueQuotedBeforeEncoding(c);
-            } else if (
-                this.state === State.MetaContentValueQuotedAfterEncoding
-            ) {
-                this.stateMetaContentValueQuotedAfterEncoding(c);
-            } else if (this.state === State.MetaContentValueQuotedBeforeValue) {
-                this.stateMetaContentValueQuotedBeforeValue(c);
-            } else if (this.state === State.MetaContentValueQuotedValueQuoted) {
-                this.stateMetaContentValueQuotedValueQuoted(c);
-            } else if (
-                this.state === State.MetaContentValueQuotedValueUnquoted
-            ) {
-                this.stateMetaContentValueQuotedValueUnquoted(c);
-            } else if (
-                this.state === State.MetaContentValueUnquotedBeforeEncoding
-            ) {
-                this.stateMetaContentValueUnquotedBeforeEncoding(c);
-            } else if (
-                this.state === State.MetaContentValueUnquotedBeforeValue
-            ) {
-                this.stateMetaContentValueUnquotedBeforeValue(c);
-            } else if (
-                this.state === State.MetaContentValueUnquotedValueQuoted
-            ) {
-                this.stateMetaContentValueUnquotedValueQuoted(c);
-            } else if (
-                this.state === State.MetaContentValueUnquotedValueUnquoted
-            ) {
-                this.stateMetaContentValueUnquotedValueUnquoted(c);
-            } else if (this.state === State.AnyAttribName) {
-                this.stateAnyAttribName(c);
-            } else if (this.state === State.AfterAttributeName) {
-                this.stateAfterAttributeName(c);
-            } else if (this.state === State.BeforeAttributeValue) {
-                this.stateBeforeAttributeValue(c);
-            } else if (this.state === State.AttributeValueQuoted) {
-                this.stateAttributeValueQuoted(c);
-            } else {
-                // (this.state === State.AttributeValueUnquoted)
-                this.stateAttributeValueUnquoted(c);
+                case State.BOM16BE: {
+                    this.stateBOM16BE(c);
+
+                    break;
+                }
+                case State.BOM16LE: {
+                    this.stateBOM16LE(c);
+
+                    break;
+                }
+                case State.BOM8: {
+                    this.stateBOM8(c);
+
+                    break;
+                }
+                case State.UTF16LE_XML_PREFIX: {
+                    this.stateUTF16LE_XML_PREFIX(c);
+
+                    break;
+                }
+                case State.BeginLT: {
+                    this.stateBeginLT(c);
+
+                    break;
+                }
+                case State.UTF16BE_XML_PREFIX: {
+                    this.stateUTF16BE_XML_PREFIX(c);
+
+                    break;
+                }
+                case State.BeforeTag: {
+                    // Optimization: Skip all characters until we find a `<`
+                    const idx = buffer.indexOf(Chars.LT, index);
+
+                    if (idx < 0) {
+                        // We are done with this buffer. Stay in the state and try on the next one.
+                        index = buffer.length;
+                    } else {
+                        index = idx;
+                        this.stateBeforeTag(Chars.LT);
+                    }
+
+                    break;
+                }
+                case State.BeforeTagName: {
+                    this.stateBeforeTagName(c);
+
+                    break;
+                }
+                case State.BeforeCloseTagName: {
+                    this.stateBeforeCloseTagName(c);
+
+                    break;
+                }
+                case State.CommentStart: {
+                    this.stateCommentStart(c);
+
+                    break;
+                }
+                case State.CommentEnd: {
+                    this.stateCommentEnd(c);
+
+                    break;
+                }
+                case State.TagNameMeta: {
+                    this.stateTagNameMeta(c);
+
+                    break;
+                }
+                case State.TagNameOther: {
+                    this.stateTagNameOther(c);
+
+                    break;
+                }
+                case State.XMLDeclaration: {
+                    this.stateXMLDeclaration(c);
+
+                    break;
+                }
+                case State.XMLDeclarationBeforeEncoding: {
+                    this.stateXMLDeclarationBeforeEncoding(c);
+
+                    break;
+                }
+                case State.XMLDeclarationAfterEncoding: {
+                    this.stateXMLDeclarationAfterEncoding(c);
+
+                    break;
+                }
+                case State.XMLDeclarationBeforeValue: {
+                    this.stateXMLDeclarationBeforeValue(c);
+
+                    break;
+                }
+                case State.XMLDeclarationValue: {
+                    this.stateXMLDeclarationValue(c);
+
+                    break;
+                }
+                case State.WeirdTag: {
+                    this.stateWeirdTag(c);
+
+                    break;
+                }
+                case State.BeforeAttribute: {
+                    this.stateBeforeAttribute(c);
+
+                    break;
+                }
+                case State.MetaAttribHttpEquiv: {
+                    this.stateMetaAttribHttpEquiv(c);
+
+                    break;
+                }
+                case State.MetaAttribHttpEquivValue: {
+                    this.stateMetaAttribHttpEquivValue(c);
+
+                    break;
+                }
+                case State.MetaAttribC: {
+                    this.stateMetaAttribC(c);
+
+                    break;
+                }
+                case State.MetaAttribContent: {
+                    this.stateMetaAttribContent(c);
+
+                    break;
+                }
+                case State.MetaAttribCharset: {
+                    this.stateMetaAttribCharset(c);
+
+                    break;
+                }
+                case State.MetaAttribAfterName: {
+                    this.stateMetaAttribAfterName(c);
+
+                    break;
+                }
+                case State.MetaContentValueQuotedBeforeEncoding: {
+                    this.stateMetaContentValueQuotedBeforeEncoding(c);
+
+                    break;
+                }
+                case State.MetaContentValueQuotedAfterEncoding: {
+                    this.stateMetaContentValueQuotedAfterEncoding(c);
+
+                    break;
+                }
+                case State.MetaContentValueQuotedBeforeValue: {
+                    this.stateMetaContentValueQuotedBeforeValue(c);
+
+                    break;
+                }
+                case State.MetaContentValueQuotedValueQuoted: {
+                    this.stateMetaContentValueQuotedValueQuoted(c);
+
+                    break;
+                }
+                case State.MetaContentValueQuotedValueUnquoted: {
+                    this.stateMetaContentValueQuotedValueUnquoted(c);
+
+                    break;
+                }
+                case State.MetaContentValueUnquotedBeforeEncoding: {
+                    this.stateMetaContentValueUnquotedBeforeEncoding(c);
+
+                    break;
+                }
+                case State.MetaContentValueUnquotedBeforeValue: {
+                    this.stateMetaContentValueUnquotedBeforeValue(c);
+
+                    break;
+                }
+                case State.MetaContentValueUnquotedValueQuoted: {
+                    this.stateMetaContentValueUnquotedValueQuoted(c);
+
+                    break;
+                }
+                case State.MetaContentValueUnquotedValueUnquoted: {
+                    this.stateMetaContentValueUnquotedValueUnquoted(c);
+
+                    break;
+                }
+                case State.AnyAttribName: {
+                    this.stateAnyAttribName(c);
+
+                    break;
+                }
+                case State.AfterAttributeName: {
+                    this.stateAfterAttributeName(c);
+
+                    break;
+                }
+                case State.BeforeAttributeValue: {
+                    this.stateBeforeAttributeValue(c);
+
+                    break;
+                }
+                case State.AttributeValueQuoted: {
+                    this.stateAttributeValueQuoted(c);
+
+                    break;
+                }
+                default: {
+                    // (State.AttributeValueUnquoted)
+                    this.stateAttributeValueUnquoted(c);
+                }
             }
         }
 

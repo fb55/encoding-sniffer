@@ -1,8 +1,7 @@
-import { Transform, type TransformCallback } from "stream";
+import { Transform, type TransformCallback } from "node:stream";
 import { decode, decodeStream } from "iconv-lite";
-import { Sniffer, SnifferOptions, getEncoding } from "./sniffer.js";
-
-export { type SnifferOptions, getEncoding };
+import type { SnifferOptions } from "./sniffer.js";
+import { Sniffer, getEncoding } from "./sniffer.js";
 
 /**
  * Sniff the encoding of a buffer, then decode it.
@@ -43,7 +42,7 @@ export class DecodeStream extends Transform {
         chunk: Uint8Array,
         _encoding: string,
         callback: TransformCallback
-    ) {
+    ): void {
         if (this.sniffer) {
             this.sniffer.write(chunk);
             this.readBytes += chunk.length;
@@ -60,7 +59,7 @@ export class DecodeStream extends Transform {
         this.iconv!.write(chunk, callback);
     }
 
-    private createIconvStream() {
+    private createIconvStream(): void {
         const iconv = decodeStream(this.sniffer!.encoding);
         iconv.on("data", (chunk: string) => this.push(chunk));
         iconv.on("end", () => this.push(null));
@@ -82,3 +81,5 @@ export class DecodeStream extends Transform {
         this.iconv!.end(callback);
     }
 }
+
+export { type SnifferOptions, getEncoding } from "./sniffer.js";
