@@ -49,6 +49,9 @@
     },
     "author": "Felix Boehm <me@feedic.com>",
     "license": "MIT",
+    "files": [
+        "lib"
+    ],
     "exports": {
         ".": {
             "import": "./lib/esm/index.js",
