@@ -4,6 +4,13 @@ import { Sniffer, SnifferOptions, getEncoding } from "./sniffer.js";
 
 export { type SnifferOptions, getEncoding };
 
+/**
+ * Sniff the encoding of a buffer, then decode it.
+ *
+ * @param buffer Buffer to be decoded
+ * @param options Options for the sniffer
+ * @returns The decoded buffer
+ */
 export function decodeBuffer(
     buffer: Buffer,
     options: SnifferOptions = {}
