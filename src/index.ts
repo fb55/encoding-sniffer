@@ -1,11 +1,23 @@
 import { Transform, type TransformCallback } from "stream";
-import { decodeStream } from "iconv-lite";
-import { Sniffer, SnifferOptions } from "./sniffer.js";
+import { decode, decodeStream } from "iconv-lite";
+import { Sniffer, SnifferOptions, getEncoding } from "./sniffer.js";
 
-export type { SnifferOptions };
-export { getEncoding } from "./sniffer.js";
+export { type SnifferOptions, getEncoding };
 
-/** Reads the first 1024 bytes and passes them to the sniffer. Once an encoding has been determined, it passes all data to iconv-lite's stream and outputs the results. */
+export function decodeBuffer(
+    buffer: Buffer,
+    options: SnifferOptions = {}
+): string {
+    return decode(buffer, getEncoding(buffer, options));
+}
+
+/**
+ * Decodes a stream of buffers into a stream of strings.
+ *
+ * Reads the first 1024 bytes and passes them to the sniffer. Once an encoding
+ * has been determined, it passes all data to iconv-lite's stream and outputs
+ * the results.
+ */
 export class DecodeStream extends Transform {
     private sniffer: Sniffer | null;
     private readonly buffers: Uint8Array[] = [];
