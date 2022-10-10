@@ -199,7 +199,12 @@ export class Sniffer {
     private state = State.Begin;
     private sectionIndex = 0;
     private attribType = AttribType.None;
-    private gotPragma = false;
+    /**
+     * Indicates if the `http-equiv` is `content-type`.
+     *
+     * Initially `null`, a boolean when a value is found.
+     */
+    private gotPragma: boolean | null = null;
     private needsPragma: string | null = null;
 
     private inMetaTag = false;
@@ -470,7 +475,7 @@ export class Sniffer {
             }
         } else if (SPACE_CHARACTERS.has(c)) {
             this.inMetaTag = true;
-            this.gotPragma = false;
+            this.gotPragma = null;
             this.needsPragma = null;
             this.state = State.BeforeAttribute;
             return;
@@ -624,7 +629,7 @@ export class Sniffer {
             ) {
                 if (this.needsPragma !== null) {
                     this.setResult(this.needsPragma, ResultType.META_TAG);
-                } else {
+                } else if (this.gotPragma === null) {
                     this.gotPragma = true;
                 }
 
@@ -651,7 +656,8 @@ export class Sniffer {
 
         if (this.gotPragma) {
             this.setResult(encoding, ResultType.META_TAG);
-        } else {
+        } else if (this.needsPragma === null) {
+            // Don't override a previous result.
             this.needsPragma = encoding;
         }
 
