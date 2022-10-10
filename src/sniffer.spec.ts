@@ -1,4 +1,4 @@
-import { Sniffer, ResultType, STRINGS } from "./index";
+import { Sniffer, ResultType, STRINGS } from "./sniffer.js";
 
 const XML_ENCODING = "<?xml encoding='utf-16'>";
 const META_CONTENT =

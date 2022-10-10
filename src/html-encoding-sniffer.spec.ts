@@ -8,7 +8,7 @@
 import assert from "assert";
 import fs from "fs";
 import path from "path";
-import htmlEncodingSniffer from ".";
+import htmlEncodingSniffer from "./sniffer.js";
 
 function read(relative: string): Uint8Array {
     // Test that the module works with Uint8Arrays, not just Buffers:
