@@ -25,7 +25,7 @@ export function decodeBuffer(
  * the results.
  */
 export class DecodeStream extends Transform {
-    private sniffer: Sniffer | null;
+    private readonly sniffer: Sniffer;
     private readonly buffers: Uint8Array[] = [];
     /** The iconv decode stream. If it is set, we have read more than `options.maxBytes` bytes. */
     private iconv: NodeJS.ReadWriteStream | null = null;
@@ -43,24 +43,26 @@ export class DecodeStream extends Transform {
         _encoding: string,
         callback: TransformCallback
     ): void {
-        if (this.sniffer) {
+        if (this.readBytes < this.maxBytes) {
             this.sniffer.write(chunk);
             this.readBytes += chunk.length;
 
-            if (this.readBytes >= this.maxBytes) {
-                this.createIconvStream();
-            } else {
+            if (this.readBytes < this.maxBytes) {
                 this.buffers.push(chunk);
                 callback();
                 return;
             }
         }
 
-        this.iconv!.write(chunk, callback);
+        this.getIconvStream().write(chunk, callback);
     }
 
-    private createIconvStream(): void {
-        const iconv = decodeStream(this.sniffer!.encoding);
+    private getIconvStream(): NodeJS.ReadWriteStream {
+        if (this.iconv) {
+            return this.iconv;
+        }
+
+        const iconv = decodeStream(this.sniffer.encoding);
         iconv.on("data", (chunk: string) => this.push(chunk));
         iconv.on("end", () => this.push(null));
 
@@ -71,14 +73,11 @@ export class DecodeStream extends Transform {
         }
         this.buffers.length = 0;
 
-        // Remove the reference so that it can be collected.
-        this.sniffer = null;
+        return iconv;
     }
 
     override _flush(callback: TransformCallback): void {
-        if (!this.iconv) this.createIconvStream();
-
-        this.iconv!.end(callback);
+        this.getIconvStream().end(callback);
     }
 }
 
