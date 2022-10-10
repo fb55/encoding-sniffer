@@ -639,6 +639,8 @@ export class Sniffer {
             return;
         }
 
+        this.gotPragma = false;
+
         if (this.quoteCharacter === 0) {
             this.state = State.AttributeValueUnquoted;
             this.stateAttributeValueUnquoted(c);
