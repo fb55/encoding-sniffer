@@ -282,7 +282,6 @@ export class Sniffer {
             }
             default: {
                 this.state = State.BeforeTag;
-                this.stateBeforeTag(c);
             }
         }
     }
