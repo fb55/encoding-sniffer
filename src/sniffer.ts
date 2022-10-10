@@ -186,14 +186,8 @@ const X_USER_DEFINED = /^\s*x-user-defined\s*$/i;
 export class Sniffer {
     /** The maximum number of bytes to sniff. */
     readonly maxBytes: number;
-    /** All buffers we have looked at. */
-    buffers: Uint8Array[] = [];
-    /** The index of the buffer we are currently looking at. */
-    bufferIndex = 0;
-    /** The offset of the last buffer. */
+    /** The offset of the previous buffers. */
     offset = 0;
-    /** The index within the current buffer. */
-    index = 0;
 
     private state = State.Begin;
     private sectionIndex = 0;
@@ -257,11 +251,6 @@ export class Sniffer {
         }
     }
 
-    public write(buffer: Uint8Array) {
-        this.buffers.push(buffer);
-        this.process();
-    }
-
     stateBegin(c: number) {
         if (c === STRINGS.UTF16BE_BOM[0]) {
             this.state = State.BOM16BE;
@@ -277,7 +266,7 @@ export class Sniffer {
             this.state = State.BeginLT;
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -303,7 +292,7 @@ export class Sniffer {
             }
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -316,7 +305,7 @@ export class Sniffer {
             }
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -325,7 +314,7 @@ export class Sniffer {
             this.setResult("utf-16le", ResultType.BOM);
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -334,7 +323,7 @@ export class Sniffer {
             this.setResult("utf-16be", ResultType.BOM);
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -346,17 +335,8 @@ export class Sniffer {
         }
     }
 
-    stateBeforeTag() {
-        const index = this.buffers[this.bufferIndex].indexOf(
-            Chars.LT,
-            this.index
-        );
-
-        if (index < 0) {
-            // We are done with this buffer. Stay in the state and try on the next one.
-            this.index = this.buffers[this.bufferIndex].length;
-        } else {
-            this.index = index; // Will be increased by one later.
+    stateBeforeTag(c: number) {
+        if (c === Chars.LT) {
             this.state = State.BeforeTagName;
             this.inMetaTag = false;
         }
@@ -390,7 +370,7 @@ export class Sniffer {
             this.state = State.WeirdTag;
         } else {
             this.state = State.BeforeTag;
-            this.stateBeforeTag();
+            this.stateBeforeTag(c);
         }
     }
 
@@ -870,9 +850,14 @@ export class Sniffer {
         }
     }
 
-    process() {
-        while (this.offset + this.index < this.maxBytes) {
-            const c = this.buffers[this.bufferIndex][this.index];
+    public write(buffer: Uint8Array) {
+        let index = 0;
+        for (
+            ;
+            index < buffer.length && this.offset + index < this.maxBytes;
+            index++
+        ) {
+            const c = buffer[index];
 
             if (this.state === State.Begin) {
                 this.stateBegin(c);
@@ -889,7 +874,16 @@ export class Sniffer {
             } else if (this.state === State.UTF16BE_XML_PREFIX) {
                 this.stateUTF16BE_XML_PREFIX(c);
             } else if (this.state === State.BeforeTag) {
-                this.stateBeforeTag();
+                // Optimization: Skip all characters until we find a `<`
+                const idx = buffer.indexOf(Chars.LT, index);
+
+                if (idx < 0) {
+                    // We are done with this buffer. Stay in the state and try on the next one.
+                    index = buffer.length;
+                } else {
+                    index = idx;
+                    this.stateBeforeTag(Chars.LT);
+                }
             } else if (this.state === State.BeforeTagName) {
                 this.stateBeforeTagName(c);
             } else if (this.state === State.BeforeCloseTagName) {
@@ -972,15 +966,9 @@ export class Sniffer {
                 // (this.state === State.AttributeValueUnquoted)
                 this.stateAttributeValueUnquoted(c);
             }
-
-            if (++this.index >= this.buffers[this.bufferIndex].length) {
-                this.offset += this.buffers[this.bufferIndex].length;
-                this.index = 0;
-                if (++this.bufferIndex === this.buffers.length) {
-                    return;
-                }
-            }
         }
+
+        this.offset += index;
     }
 }
 
