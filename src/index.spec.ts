@@ -109,17 +109,6 @@ describe("Sniffer", () => {
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
     });
 
-    it("should ignore the slash of self-closing meta tags", () => {
-        const sniffer = new Sniffer();
-        sniffer.write(
-            Buffer.from(
-                "<meta http-equiv='content-type' content=CHARSET=iso-8859-2/>"
-            )
-        );
-        expect(sniffer.encoding).toBe("ISO-8859-2");
-        expect(sniffer.resultType).toBe(ResultType.META_TAG);
-    });
-
     it("should support XML UTF-16LE prefixes", () => {
         const sniffer = new Sniffer();
         sniffer.write(STRINGS.UTF16LE_XML_PREFIX);

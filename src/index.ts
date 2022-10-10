@@ -119,7 +119,6 @@ const END_OF_UNQUOTED_ATTRIBUTE_VALUE = new Set([
     Chars.LF,
     Chars.CR,
     Chars.TAB,
-    Chars.SLASH,
     Chars.GT,
 ]);
 
