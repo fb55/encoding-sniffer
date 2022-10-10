@@ -984,7 +984,8 @@ export class Sniffer {
     }
 }
 
-export default function getEncoding(
+/** Get the encoding for the passed buffer. */
+export function getEncoding(
     buffer: Uint8Array,
     options?: SnifferOptions
 ): string {

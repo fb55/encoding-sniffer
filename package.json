@@ -47,6 +47,16 @@
     },
     "author": "Felix Boehm <me@feedic.com>",
     "license": "MIT",
+    "exports": {
+        ".": {
+            "import": "./lib/esm/index.js",
+            "require": "./lib/index.js"
+        },
+        "./lib/sniffer": {
+            "import": "./lib/esm/sniffer.js",
+            "require": "./lib/sniffer.js"
+        }
+    },
     "jest": {
         "preset": "ts-jest",
         "testEnvironment": "node",
