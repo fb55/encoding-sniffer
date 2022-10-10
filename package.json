@@ -3,6 +3,14 @@
     "version": "0.0.0",
     "description": "Implementation of the HTML encoding sniffer algo, with stream support",
     "main": "lib/index.js",
+    "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/fb55/encoding-sniffer.git"
+    },
+    "bugs": {
+        "url": "https://github.com/fb55/encoding-sniffer/issues"
+    },
     "dependencies": {
         "whatwg-encoding": "^2.0.0"
     },
@@ -31,7 +39,9 @@
         "format:es": "npm run lint:es -- --fix",
         "format:prettier": "npm run prettier -- --write",
         "prettier": "prettier '**/*.{ts,md,json,yml}'",
-        "build": "tsc",
+        "build": "npm run build:cjs && npm run build:esm",
+        "build:cjs": "tsc --sourceRoot https://raw.githubusercontent.com/fb55/encoding-sniffer/$(git rev-parse HEAD)/src/",
+        "build:esm": "npm run build:cjs -- --module esnext --target es2019 --outDir lib/esm && echo '{\"type\":\"module\"}' > lib/esm/package.json",
         "build:docs": "typedoc --hideGenerator src/index.ts",
         "prepublishOnly": "npm run build"
     },
@@ -40,7 +50,13 @@
     "jest": {
         "preset": "ts-jest",
         "testEnvironment": "node",
-        "coverageProvider": "v8"
+        "coverageProvider": "v8",
+        "moduleNameMapper": {
+            "^(.*)\\.js$": [
+                "$1.js",
+                "$1"
+            ]
+        }
     },
     "prettier": {
         "tabWidth": 4,
