@@ -976,3 +976,12 @@ export class Sniffer {
         }
     }
 }
+
+export default function getEncoding(
+    buffer: Uint8Array,
+    options?: SnifferOptions
+): string {
+    const sniffer = new Sniffer(options);
+    sniffer.write(buffer);
+    return sniffer.encoding;
+}
