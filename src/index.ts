@@ -33,7 +33,7 @@ export class DecodeStream extends Transform {
     private readBytes = 0;
 
     constructor(options?: SnifferOptions) {
-        super();
+        super({ decodeStrings: false, encoding: "utf-8" });
         this.sniffer = new Sniffer(options);
         this.maxBytes = options?.maxBytes ?? 1024;
     }
@@ -63,7 +63,7 @@ export class DecodeStream extends Transform {
         }
 
         const iconv = decodeStream(this.sniffer.encoding);
-        iconv.on("data", (chunk: string) => this.push(chunk));
+        iconv.on("data", (chunk: string) => this.push(chunk, "utf-8"));
         iconv.on("end", () => this.push(null));
 
         this.iconv = iconv;
