@@ -1,6 +1,6 @@
 {
     "name": "encoding-sniffer",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "Implementation of the HTML encoding sniffer algo, with stream support",
     "main": "lib/index.js",
     "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
