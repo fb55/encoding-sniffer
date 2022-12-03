@@ -597,7 +597,7 @@ export class Sniffer {
     }
 
     private quoteCharacter = 0;
-    private attributeValue: number[] = [];
+    private readonly attributeValue: number[] = [];
 
     private stateBeforeAttributeValue(c: number): void {
         if (SPACE_CHARACTERS.has(c)) return;
