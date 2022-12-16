@@ -47,15 +47,15 @@ const options = {
     defaultEncoding: "windows-1252",
 };
 
-// Use the DecodeStream transform stream to automatically decode
+// Use the `DecodeStream` transform stream to automatically decode
 // the contents of a stream as they are read
-const decodeStream = new DecodeStream();
+const decodeStream = new DecodeStream(options);
 
-// Or, use the getEncoding function to detect the encoding of a buffer
-const encoding = getEncoding(buffer);
+// Or, use the `getEncoding` function to detect the encoding of a buffer
+const encoding = getEncoding(buffer, options);
 
-// Use the decodeBuffer function to decode the contents of a buffer
-const decodedBuffer = decodeBuffer(buffer, { encoding });
+// Use the `decodeBuffer` function to decode the contents of a buffer
+const decodedBuffer = decodeBuffer(buffer, options);
 ```
 
 ## License
