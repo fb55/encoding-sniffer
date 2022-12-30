@@ -1,5 +1,5 @@
 import { Transform, type TransformCallback } from "node:stream";
-import { decode, decodeStream } from "iconv-lite";
+import iconv from "iconv-lite";
 import type { SnifferOptions } from "./sniffer.js";
 import { Sniffer, getEncoding } from "./sniffer.js";
 
@@ -14,7 +14,7 @@ export function decodeBuffer(
     buffer: Buffer,
     options: SnifferOptions = {}
 ): string {
-    return decode(buffer, getEncoding(buffer, options));
+    return iconv.decode(buffer, getEncoding(buffer, options));
 }
 
 /**
@@ -62,18 +62,18 @@ export class DecodeStream extends Transform {
             return this.iconv;
         }
 
-        const iconv = decodeStream(this.sniffer.encoding);
-        iconv.on("data", (chunk: string) => this.push(chunk, "utf-8"));
-        iconv.on("end", () => this.push(null));
+        const stream = iconv.decodeStream(this.sniffer.encoding);
+        stream.on("data", (chunk: string) => this.push(chunk, "utf-8"));
+        stream.on("end", () => this.push(null));
 
-        this.iconv = iconv;
+        this.iconv = stream;
 
         for (const buffer of this.buffers) {
-            iconv.write(buffer);
+            stream.write(buffer);
         }
         this.buffers.length = 0;
 
-        return iconv;
+        return stream;
     }
 
     override _flush(callback: TransformCallback): void {
