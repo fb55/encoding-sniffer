@@ -2,11 +2,15 @@
 
 An implementation of the HTML encoding sniffer algo, with stream support.
 
+This module wraps around [iconv-lite](https://github.com/ashtuchkin/iconv-lite)
+to make decoding buffers and streams incredibly easy.
+
 ## Features
 
 -   Support for streams
 -   Support for XML encoding types, including UTF-16 prefixes and
     `<?xml encoding="...">`
+-   Allows decoding streams and buffers with a single function call
 
 ## Installation
 
