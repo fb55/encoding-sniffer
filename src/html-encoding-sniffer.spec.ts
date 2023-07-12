@@ -13,7 +13,7 @@ import { getEncoding as htmlEncodingSniffer } from "./index.js";
 function read(relative: string): Uint8Array {
     // Test that the module works with Uint8Arrays, not just Buffers:
     const buffer = fs.readFileSync(
-        path.resolve(__dirname, "__fixtures__", relative)
+        path.resolve(__dirname, "__fixtures__", relative),
     );
     return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
 }
