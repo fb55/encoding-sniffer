@@ -3,7 +3,7 @@
 exports[`DecodeStream Fixtures should decode no-bom-charset-bracket.html 1`] = `
 "<!DOCTYPE html>
 <html>
-    <head><meta charset=\\"utf-8\\">
+    <head><meta charset="utf-8">
     </head>
     <body></body>
 </html>
@@ -14,10 +14,10 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-no-quotes
 "<!DOCTYPE html>
 <html>
   <head>
-      <!--<meta http-equiv=\\"Content-Type\\" content=\\"text/html;charset=ISO-8859-8\\">-->
+      <!--<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-8">-->
       <meta http-equiv=Content-Type content=text/html;charset=ISO-8859-5>
-      <script src=\\"/resources/testharness.js\\"></script>
-      <script src=\\"/resources/testharnessreport.js\\"></script>
+      <script src="/resources/testharness.js"></script>
+      <script src="/resources/testharnessreport.js"></script>
   </head>
   <body></body>
 </html>
@@ -28,7 +28,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-refresh.h
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv=refresh http-equiv=Content-Type content=\\"text/html;charset=iso-8859-2\\">
+        <meta http-equiv=refresh http-equiv=Content-Type content="text/html;charset=iso-8859-2">
     </head>
     <body></body>
 </html>
@@ -39,7 +39,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-second-ch
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv=Content-Type content=\\"text/html;charsetcharset=iso-8859-2\\">
+        <meta http-equiv=Content-Type content="text/html;charsetcharset=iso-8859-2">
     </head>
     <body></body>
 </html>
@@ -50,9 +50,9 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-tis-620.h
 "<!DOCTYPE html>
 <html>
     <head>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
-        <meta http-equiv=\\"content-type\\" content=\\"text/html;charset='tis-620'\\">
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
+        <meta http-equiv="content-type" content="text/html;charset='tis-620'">
     </head>
     <body>This is not really tis-620 (windows-874), of course</body>
 </html>
@@ -63,7 +63,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-trailing-
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv=Content-Type content=\\"text/html;charset=iso-8859-2 \\">
+        <meta http-equiv=Content-Type content="text/html;charset=iso-8859-2 ">
     </head>
     <body></body>
 </html>
@@ -74,9 +74,9 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-koi8.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
-        <meta charset=\\"koi8\\">
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
+        <meta charset="koi8">
     </head>
     <body>This is not really koi8 (KOI8-R), of course</body>
 </html>
@@ -87,7 +87,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-short-comment.html 1
 "<!DOCTYPE html>
 <html>
     <head>
-    <!--><meta charset=\\"iso-8859-2\\">
+    <!--><meta charset="iso-8859-2">
     </head>
     <body></body>
 </html>
@@ -97,28 +97,28 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-short-comment.html 1
 exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16.html 1`] = `
 "<!DOCTYPE html>
 <html>
-<meta charset=\\"utf-16\\">
+<meta charset="utf-16">
 "
 `;
 
 exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16be.html 1`] = `
 "<!DOCTYPE html>
 <html>
-<meta charset=\\"utf-16be\\">
+<meta charset="utf-16be">
 "
 `;
 
 exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16le.html 1`] = `
 "<!DOCTYPE html>
 <html>
-<meta charset=\\"utf-16le\\">
+<meta charset="utf-16le">
 "
 `;
 
 exports[`DecodeStream Fixtures should decode no-bom-charset-x-user-defined.html 1`] = `
 "<!DOCTYPE html>
 <html>
-<meta charset=\\"x-user-defined\\">
+<meta charset="x-user-defined">
 "
 `;
 
@@ -126,8 +126,8 @@ exports[`DecodeStream Fixtures should decode no-bom-no-charset.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
     </head>
     <body>©</body>
 </html>"
@@ -137,9 +137,9 @@ exports[`DecodeStream Fixtures should decode utf-8-bom.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta charset=\\"ISO-8859-4\\"></script>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
+        <meta charset="ISO-8859-4"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
     </head>
     <body>©</body>
 </html>"
@@ -149,9 +149,9 @@ exports[`DecodeStream Fixtures should decode utf-16be-bom.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta charset=\\"ISO-8859-4\\"></script>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
+        <meta charset="ISO-8859-4"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
     </head>
     <body>©</body>
 </html>"
@@ -161,9 +161,9 @@ exports[`DecodeStream Fixtures should decode utf-16le-bom.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta charset=\\"ISO-8859-4\\"></script>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
+        <meta charset="ISO-8859-4"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
     </head>
     <body>©</body>
 </html>"
@@ -173,9 +173,9 @@ exports[`DecodeStream should decode a file one byte at a time 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
-        <meta charset=\\"ISO-8859-4\\"></script>
-        <script src=\\"script-utf8.js\\" charset=\\"UTF-8\\"></script>
-        <script src=\\"script-iso88591.js\\" charset=\\"ISO-8859-1\\"></script>
+        <meta charset="ISO-8859-4"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
     </head>
     <body>©</body>
 </html>"
