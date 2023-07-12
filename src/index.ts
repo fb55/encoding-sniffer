@@ -12,7 +12,7 @@ import { Sniffer, getEncoding } from "./sniffer.js";
  */
 export function decodeBuffer(
     buffer: Buffer,
-    options: SnifferOptions = {}
+    options: SnifferOptions = {},
 ): string {
     return iconv.decode(buffer, getEncoding(buffer, options));
 }
@@ -41,7 +41,7 @@ export class DecodeStream extends Transform {
     override _transform(
         chunk: Uint8Array,
         _encoding: string,
-        callback: TransformCallback
+        callback: TransformCallback,
     ): void {
         if (this.readBytes < this.maxBytes) {
             this.sniffer.write(chunk);

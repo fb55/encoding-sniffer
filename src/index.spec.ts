@@ -31,7 +31,7 @@ describe("DecodeStream", () => {
             it(`should decode ${file}`, async () => {
                 const stream = new DecodeStream();
                 createReadStream(
-                    path.join(__dirname, "__fixtures__", file)
+                    path.join(__dirname, "__fixtures__", file),
                 ).pipe(stream);
                 expect(await getStream(stream)).toMatchSnapshot();
             });
@@ -40,7 +40,7 @@ describe("DecodeStream", () => {
 
     it("should decode a file one byte at a time", async () => {
         const file = await fs.readFile(
-            path.join(__dirname, "__fixtures__", "utf-16be-bom.html")
+            path.join(__dirname, "__fixtures__", "utf-16be-bom.html"),
         );
         const stream = new DecodeStream();
         const collector = getStream(stream);
