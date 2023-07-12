@@ -59,7 +59,7 @@ describe("Sniffer", () => {
     it("should not recognize HTML meta tag http-equiv, if not within 1024 bytes", () => {
         const sniffer = new Sniffer();
         sniffer.write(
-            Buffer.from("a".repeat(1010) + META_CONTENT.toUpperCase())
+            Buffer.from("a".repeat(1010) + META_CONTENT.toUpperCase()),
         );
         expect(sniffer.encoding).toBe("windows-1252");
         expect(sniffer.resultType).toBe(ResultType.DEFAULT);
@@ -70,7 +70,7 @@ describe("Sniffer", () => {
         sniffer.write(
             Buffer.from(`${XML_ENCODING}<foo></foo> <bar baz><! ><!-- 
             foo --><mEtA foo=bar boo="hoo" content ="charsetsomethingcchArset  
-            =\t'  windows-1254';other" http-EQUIV = contenT-tYpe>${META_CONTENT}`)
+            =\t'  windows-1254';other" http-EQUIV = contenT-tYpe>${META_CONTENT}`),
         );
         expect(sniffer.encoding).toBe("windows-1254");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
@@ -80,8 +80,8 @@ describe("Sniffer", () => {
         const sniffer = new Sniffer();
         sniffer.write(
             Buffer.from(
-                "<!---><meta http-equiv='content-type' content='CHARSET=x-user-defined'>"
-            )
+                "<!---><meta http-equiv='content-type' content='CHARSET=x-user-defined'>",
+            ),
         );
         expect(sniffer.encoding).toBe("windows-1252");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
@@ -91,8 +91,8 @@ describe("Sniffer", () => {
         const sniffer = new Sniffer();
         sniffer.write(
             Buffer.from(
-                "<!--><meta http-equiv='content-type' content=CHARSET='UTF-16BE'>"
-            )
+                "<!--><meta http-equiv='content-type' content=CHARSET='UTF-16BE'>",
+            ),
         );
         expect(sniffer.encoding).toBe("UTF-8");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);
@@ -102,8 +102,8 @@ describe("Sniffer", () => {
         const sniffer = new Sniffer();
         sniffer.write(
             Buffer.from(
-                "<meta content=CHARSET='iso-8859-2' content=charset=UTF-16LE http-equiv='content-type'>"
-            )
+                "<meta content=CHARSET='iso-8859-2' content=charset=UTF-16LE http-equiv='content-type'>",
+            ),
         );
         expect(sniffer.encoding).toBe("ISO-8859-2");
         expect(sniffer.resultType).toBe(ResultType.META_TAG);

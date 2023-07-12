@@ -525,7 +525,7 @@ export class Sniffer {
     private handleMetaAttrib(
         c: number,
         section: Uint8Array,
-        type: AttribType
+        type: AttribType,
     ): void {
         if (this.advanceSectionIC(section, c)) {
             if (this.sectionIndex === section.length) {
@@ -679,7 +679,7 @@ export class Sniffer {
         if (this.attribType === AttribType.Charset) {
             this.setResult(
                 String.fromCharCode(...this.attributeValue),
-                ResultType.META_TAG
+                ResultType.META_TAG,
             );
         }
     }
@@ -868,7 +868,7 @@ export class Sniffer {
         if (isQuote(c)) {
             this.setResult(
                 String.fromCharCode(...this.attributeValue),
-                ResultType.XML_ENCODING
+                ResultType.XML_ENCODING,
             );
             this.state = State.WeirdTag;
         } else if (c === Chars.GT) {
@@ -1113,7 +1113,7 @@ export class Sniffer {
 /** Get the encoding for the passed buffer. */
 export function getEncoding(
     buffer: Uint8Array,
-    options?: SnifferOptions
+    options?: SnifferOptions,
 ): string {
     const sniffer = new Sniffer(options);
     sniffer.write(buffer);
