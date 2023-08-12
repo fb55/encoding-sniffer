@@ -51,7 +51,6 @@ jobs:
                   node-version: ${{ matrix.node }}
                   cache: npm
             - run: npm ci
-            - run: npm run build --if-present
 
             - name: Run Jest
               run: npm run test:jest
