@@ -2,31 +2,28 @@
     "compilerOptions": {
         /* Basic Options */
         "target": "es5",
-        "module": "commonjs",
+        "module": "node16",
         "lib": ["ES2015.Core"],
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
         "outDir": "lib",
+        // esModuleInterop is implied by `--module node16`,
+        // but ts-jest doesn't recognize that and needs it listed.
+        "esModuleInterop": true,
 
         /* Strict Type-Checking Options */
         "strict": true,
 
         /* Additional Checks */
         "forceConsistentCasingInFileNames": true,
-        "importsNotUsedAsValues": "error",
         "isolatedModules": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
         "noImplicitReturns": true,
         "noPropertyAccessFromIndexSignature": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true,
-
-        /* Module Resolution Options */
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "resolveJsonModule": true
+        "noUnusedParameters": true
     },
     "include": ["src"],
     "exclude": [
