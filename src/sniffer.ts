@@ -214,11 +214,11 @@ export class Sniffer {
                     encoding === "x-user-defined"
                         ? "windows-1252"
                         : // Check if we are in a meta tag or xml declaration, and the encoding is UTF-16
-                        (type === ResultType.META_TAG ||
-                              type === ResultType.XML_ENCODING) &&
-                          (encoding === "UTF-16LE" || encoding === "UTF-16BE")
-                        ? "UTF-8"
-                        : encoding;
+                          (type === ResultType.META_TAG ||
+                                type === ResultType.XML_ENCODING) &&
+                            (encoding === "UTF-16LE" || encoding === "UTF-16BE")
+                          ? "UTF-8"
+                          : encoding;
 
                 this.resultType = type;
             }
@@ -605,8 +605,8 @@ export class Sniffer {
                 this.attribType === AttribType.Content
                     ? State.MetaContentValueQuotedBeforeEncoding
                     : this.attribType === AttribType.HttpEquiv
-                    ? State.MetaAttribHttpEquivValue
-                    : State.AttributeValueQuoted;
+                      ? State.MetaAttribHttpEquivValue
+                      : State.AttributeValueQuoted;
         } else if (this.attribType === AttribType.Content) {
             this.state = State.MetaContentValueUnquotedBeforeEncoding;
             this.stateMetaContentValueUnquotedBeforeEncoding(c);
