@@ -181,8 +181,6 @@ export interface SnifferOptions {
     defaultEncoding?: string;
 }
 
-const X_USER_DEFINED = /^\s*x-user-defined\s*$/i;
-
 export class Sniffer {
     /** The maximum number of bytes to sniff. */
     private readonly maxBytes: number;
@@ -207,25 +205,21 @@ export class Sniffer {
 
     private setResult(label: string, type: ResultType): void {
         if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
-            let encoding = labelToName(label);
+            const encoding = labelToName(label);
 
             if (encoding) {
-                if (
-                    (type === ResultType.XML_ENCODING ||
-                        type === ResultType.META_TAG) &&
-                    (encoding === "UTF-16LE" || encoding === "UTF-16BE")
-                ) {
-                    encoding = "UTF-8";
-                }
+                this.encoding =
+                    // Check if we are in a meta tag and the encoding is `x-user-defined`
+                    type === ResultType.META_TAG &&
+                    encoding === "x-user-defined"
+                        ? "windows-1252"
+                        : // Check if we are in a meta tag or xml declaration, and the encoding is UTF-16
+                        (type === ResultType.META_TAG ||
+                              type === ResultType.XML_ENCODING) &&
+                          (encoding === "UTF-16LE" || encoding === "UTF-16BE")
+                        ? "UTF-8"
+                        : encoding;
 
-                this.encoding = encoding;
-                this.resultType = type;
-            } else if (
-                // `whatwg-encoding` doesn't support x-user-defined; handle this here.
-                type === ResultType.META_TAG &&
-                X_USER_DEFINED.test(label)
-            ) {
-                this.encoding = "windows-1252";
                 this.resultType = type;
             }
         }
