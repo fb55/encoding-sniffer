@@ -611,8 +611,8 @@ export class Sniffer {
                 this.attribType === AttribType.Content
                     ? State.MetaContentValueQuotedBeforeEncoding
                     : this.attribType === AttribType.HttpEquiv
-                    ? State.MetaAttribHttpEquivValue
-                    : State.AttributeValueQuoted;
+                      ? State.MetaAttribHttpEquivValue
+                      : State.AttributeValueQuoted;
         } else if (this.attribType === AttribType.Content) {
             this.state = State.MetaContentValueUnquotedBeforeEncoding;
             this.stateMetaContentValueUnquotedBeforeEncoding(c);
