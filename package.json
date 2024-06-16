@@ -12,7 +12,7 @@
     "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
     "license": "MIT",
     "author": "Felix Boehm <me@feedic.com>",
-    "type": "commonjs",
+    "type": "module",
     "exports": {
         ".": {
             "import": {
