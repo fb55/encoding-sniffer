@@ -1,5 +1,10 @@
 {
-    "extends": ["eslint:recommended", "plugin:unicorn/recommended", "prettier"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:unicorn/recommended",
+        "plugin:n/recommended",
+        "prettier"
+    ],
     "env": {
         "node": true,
         "es6": true
