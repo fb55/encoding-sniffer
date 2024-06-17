@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { Sniffer, ResultType, STRINGS } from "./sniffer.js";
 
 const XML_ENCODING = "<?xml encoding='utf-16'>";

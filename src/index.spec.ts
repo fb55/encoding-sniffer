@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { DecodeStream } from "./index.js";
 import { readdirSync, createReadStream, promises as fs } from "node:fs";
 import path from "node:path";
