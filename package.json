@@ -1,95 +1,95 @@
 {
-    "name": "encoding-sniffer",
-    "version": "0.2.0",
-    "description": "Implementation of the HTML encoding sniffer algo, with stream support",
-    "bugs": {
-        "url": "https://github.com/fb55/encoding-sniffer/issues"
+  "name": "encoding-sniffer",
+  "version": "0.2.0",
+  "description": "Implementation of the HTML encoding sniffer algo, with stream support",
+  "bugs": {
+    "url": "https://github.com/fb55/encoding-sniffer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fb55/encoding-sniffer.git"
+  },
+  "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
+  "license": "MIT",
+  "author": "Felix Boehm <me@feedic.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "source": "./src/index.ts",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "source": "./src/index.ts",
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
     },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/fb55/encoding-sniffer.git"
-    },
-    "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
-    "license": "MIT",
-    "author": "Felix Boehm <me@feedic.com>",
-    "type": "module",
-    "exports": {
-        ".": {
-            "import": {
-                "source": "./src/index.ts",
-                "types": "./dist/esm/index.d.ts",
-                "default": "./dist/esm/index.js"
-            },
-            "require": {
-                "source": "./src/index.ts",
-                "types": "./dist/commonjs/index.d.ts",
-                "default": "./dist/commonjs/index.js"
-            }
-        },
-        "./sniffer": {
-            "import": {
-                "source": "./src/sniffer.ts",
-                "types": "./dist/esm/sniffer.d.ts",
-                "default": "./dist/esm/sniffer.js"
-            },
-            "require": {
-                "source": "./src/sniffer.ts",
-                "types": "./dist/commonjs/sniffer.d.ts",
-                "default": "./dist/commonjs/sniffer.js"
-            }
-        }
-    },
-    "main": "./dist/commonjs/index.js",
-    "types": "./dist/commonjs/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "build": "tshy",
-        "build:docs": "typedoc --hideGenerator src/index.ts",
-        "format": "npm run format:es && npm run format:prettier",
-        "format:es": "npm run lint:es -- --fix",
-        "format:prettier": "npm run prettier -- --write",
-        "lint": "npm run lint:es && npm run lint:ts && npm run lint:prettier",
-        "lint:es": "eslint --ignore-path .gitignore .",
-        "lint:ts": "tsc --noEmit",
-        "lint:prettier": "npm run prettier -- --check",
-        "prepublishOnly": "npm run build",
-        "prettier": "prettier '**/*.{ts,md,json,yml}'",
-        "test": "npm run test:vi && npm run lint",
-        "test:vi": "vitest run"
-    },
-    "prettier": {
-        "proseWrap": "always",
-        "tabWidth": 4
-    },
-    "dependencies": {
-        "iconv-lite": "^0.6.3",
-        "whatwg-encoding": "^3.1.1"
-    },
-    "devDependencies": {
-        "@types/node": "^20.14.2",
-        "@types/whatwg-encoding": "^2.0.3",
-        "@typescript-eslint/eslint-plugin": "^7.13.0",
-        "@typescript-eslint/parser": "^7.13.0",
-        "@vitest/coverage-v8": "^1.6.0",
-        "eslint": "^8.57.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-n": "^17.9.0",
-        "eslint-plugin-unicorn": "^54.0.0",
-        "prettier": "^3.3.2",
-        "tshy": "^1.15.1",
-        "typedoc": "^0.25.13",
-        "typescript": "^5.4.5",
-        "vitest": "^1.6.0"
-    },
-    "tshy": {
-        "exports": {
-            ".": "./src/index.ts",
-            "./sniffer": "./src/sniffer.ts"
-        },
-        "exclude": [
-            "src/**/*.spec.ts"
-        ]
+    "./sniffer": {
+      "import": {
+        "source": "./src/sniffer.ts",
+        "types": "./dist/esm/sniffer.d.ts",
+        "default": "./dist/esm/sniffer.js"
+      },
+      "require": {
+        "source": "./src/sniffer.ts",
+        "types": "./dist/commonjs/sniffer.d.ts",
+        "default": "./dist/commonjs/sniffer.js"
+      }
     }
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tshy",
+    "build:docs": "typedoc --hideGenerator src/index.ts",
+    "format": "npm run format:es && npm run format:prettier",
+    "format:es": "npm run lint:es -- --fix",
+    "format:prettier": "npm run prettier -- --write",
+    "lint": "npm run lint:es && npm run lint:ts && npm run lint:prettier",
+    "lint:es": "eslint --ignore-path .gitignore .",
+    "lint:ts": "tsc --noEmit",
+    "lint:prettier": "npm run prettier -- --check",
+    "prepublishOnly": "npm run build",
+    "prettier": "prettier '**/*.{ts,md,json,yml}'",
+    "test": "npm run test:vi && npm run lint",
+    "test:vi": "vitest run"
+  },
+  "prettier": {
+    "proseWrap": "always",
+    "tabWidth": 4
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3",
+    "whatwg-encoding": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "@types/whatwg-encoding": "^2.0.3",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-n": "^17.9.0",
+    "eslint-plugin-unicorn": "^54.0.0",
+    "prettier": "^3.3.2",
+    "tshy": "^1.15.1",
+    "typedoc": "^0.25.13",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  },
+  "tshy": {
+    "exports": {
+      ".": "./src/index.ts",
+      "./sniffer": "./src/sniffer.ts"
+    },
+    "exclude": [
+      "src/**/*.spec.ts"
+    ]
+  }
 }
