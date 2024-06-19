@@ -51,12 +51,12 @@ jobs:
                   cache: npm
             - run: npm ci
 
-            - name: Run Jest
-              run: npm run test:jest
+            - name: Run tests
+              run: npm run test:vi
               if: matrix.node != env.NODE_COV
 
-            - name: Run Jest with coverage
-              run: npm run test:jest -- --coverage
+            - name: Run tests with coverage
+              run: npm run test:vi -- --coverage
               if: matrix.node == env.NODE_COV
 
             - name: Run Coveralls

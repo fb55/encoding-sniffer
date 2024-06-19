@@ -8,6 +8,7 @@
 import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
+import { describe, it } from "vitest";
 import { getEncoding as htmlEncodingSniffer } from "./index.js";
 
 function read(relative: string): Uint8Array {

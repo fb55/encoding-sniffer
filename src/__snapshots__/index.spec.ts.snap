@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-bracket.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-bracket.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head><meta charset="utf-8">
@@ -10,7 +10,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-bracket.html 1`] = `
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-no-quotes.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-http-equiv-no-quotes.html 1`] = `
 "<!DOCTYPE html>
 <html>
   <head>
@@ -24,7 +24,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-no-quotes
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-refresh.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-http-equiv-refresh.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -35,7 +35,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-refresh.h
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-second-charset.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-http-equiv-second-charset.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -46,7 +46,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-second-ch
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-tis-620.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-http-equiv-tis-620.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -59,7 +59,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-tis-620.h
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-trailing-space.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-http-equiv-trailing-space.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -70,7 +70,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-http-equiv-trailing-
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-koi8.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-koi8.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -83,7 +83,7 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-koi8.html 1`] = `
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-short-comment.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-short-comment.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -94,35 +94,35 @@ exports[`DecodeStream Fixtures should decode no-bom-charset-short-comment.html 1
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-utf-16.html 1`] = `
 "<!DOCTYPE html>
 <html>
 <meta charset="utf-16">
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16be.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-utf-16be.html 1`] = `
 "<!DOCTYPE html>
 <html>
 <meta charset="utf-16be">
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-utf-16le.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-utf-16le.html 1`] = `
 "<!DOCTYPE html>
 <html>
 <meta charset="utf-16le">
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-charset-x-user-defined.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-charset-x-user-defined.html 1`] = `
 "<!DOCTYPE html>
 <html>
 <meta charset="x-user-defined">
 "
 `;
 
-exports[`DecodeStream Fixtures should decode no-bom-no-charset.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode no-bom-no-charset.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -133,19 +133,7 @@ exports[`DecodeStream Fixtures should decode no-bom-no-charset.html 1`] = `
 </html>"
 `;
 
-exports[`DecodeStream Fixtures should decode utf-8-bom.html 1`] = `
-"<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="ISO-8859-4"></script>
-        <script src="script-utf8.js" charset="UTF-8"></script>
-        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
-    </head>
-    <body>©</body>
-</html>"
-`;
-
-exports[`DecodeStream Fixtures should decode utf-16be-bom.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode utf-8-bom.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -157,7 +145,7 @@ exports[`DecodeStream Fixtures should decode utf-16be-bom.html 1`] = `
 </html>"
 `;
 
-exports[`DecodeStream Fixtures should decode utf-16le-bom.html 1`] = `
+exports[`DecodeStream > Fixtures > should decode utf-16be-bom.html 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
@@ -169,7 +157,19 @@ exports[`DecodeStream Fixtures should decode utf-16le-bom.html 1`] = `
 </html>"
 `;
 
-exports[`DecodeStream should decode a file one byte at a time 1`] = `
+exports[`DecodeStream > Fixtures > should decode utf-16le-bom.html 1`] = `
+"<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="ISO-8859-4"></script>
+        <script src="script-utf8.js" charset="UTF-8"></script>
+        <script src="script-iso88591.js" charset="ISO-8859-1"></script>
+    </head>
+    <body>©</body>
+</html>"
+`;
+
+exports[`DecodeStream > should decode a file one byte at a time 1`] = `
 "<!DOCTYPE html>
 <html>
     <head>
