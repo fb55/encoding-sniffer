@@ -71,7 +71,7 @@
         "@types/node": "^20.14.8",
         "@types/whatwg-encoding": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^7.14.1",
-        "@typescript-eslint/parser": "^7.13.1",
+        "@typescript-eslint/parser": "^7.14.1",
         "@vitest/coverage-v8": "^1.6.0",
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
