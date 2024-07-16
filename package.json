@@ -16,30 +16,27 @@
     "exports": {
         ".": {
             "import": {
-                "source": "./src/index.ts",
                 "types": "./dist/esm/index.d.ts",
                 "default": "./dist/esm/index.js"
             },
             "require": {
-                "source": "./src/index.ts",
                 "types": "./dist/commonjs/index.d.ts",
                 "default": "./dist/commonjs/index.js"
             }
         },
         "./sniffer": {
             "import": {
-                "source": "./src/sniffer.ts",
                 "types": "./dist/esm/sniffer.d.ts",
                 "default": "./dist/esm/sniffer.js"
             },
             "require": {
-                "source": "./src/sniffer.ts",
                 "types": "./dist/commonjs/sniffer.d.ts",
                 "default": "./dist/commonjs/sniffer.js"
             }
         }
     },
     "main": "./dist/commonjs/index.js",
+    "module": "./dist/esm/index.js",
     "types": "./dist/commonjs/index.d.ts",
     "files": [
         "dist"
@@ -52,8 +49,8 @@
         "format:prettier": "npm run prettier -- --write",
         "lint": "npm run lint:es && npm run lint:ts && npm run lint:prettier",
         "lint:es": "eslint --ignore-path .gitignore .",
-        "lint:ts": "tsc --noEmit",
         "lint:prettier": "npm run prettier -- --check",
+        "lint:ts": "tsc --noEmit",
         "prepublishOnly": "npm run build",
         "prettier": "prettier '**/*.{ts,md,json,yml}'",
         "test": "npm run test:vi && npm run lint",

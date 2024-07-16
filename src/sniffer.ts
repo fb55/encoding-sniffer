@@ -130,7 +130,7 @@ function toUint8Array(str: string): Uint8Array {
     return arr;
 }
 
-export const STRINGS = {
+const STRINGS = {
     UTF8_BOM: new Uint8Array([0xef, 0xbb, 0xbf]),
     UTF16LE_BOM: new Uint8Array([0xff, 0xfe]),
     UTF16BE_BOM: new Uint8Array([0xfe, 0xff]),
@@ -145,7 +145,7 @@ export const STRINGS = {
     CHARSET: toUint8Array("charset"),
     COMMENT_START: toUint8Array("<!--"),
     COMMENT_END: toUint8Array("-->"),
-};
+} satisfies Record<string, Uint8Array>;
 
 function isAsciiAlpha(c: number): boolean {
     return (
@@ -201,7 +201,7 @@ export class Sniffer {
     private inMetaTag = false;
 
     public encoding = "windows-1252";
-    public resultType = ResultType.DEFAULT;
+    public resultType: ResultType = ResultType.DEFAULT;
 
     private setResult(label: string, type: ResultType): void {
         if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
