@@ -3,7 +3,7 @@
         /* Basic Options */
         "target": "es5",
         "module": "node16",
-        "lib": ["ES2015.Core"],
+        "lib": ["ES2015.Core", "DOM"],
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
