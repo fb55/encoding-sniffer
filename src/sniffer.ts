@@ -130,7 +130,22 @@ function toUint8Array(str: string): Uint8Array {
     return arr;
 }
 
-const STRINGS = {
+export const STRINGS: {
+    UTF8_BOM: Uint8Array;
+    UTF16LE_BOM: Uint8Array;
+    UTF16BE_BOM: Uint8Array;
+    UTF16LE_XML_PREFIX: Uint8Array;
+    UTF16BE_XML_PREFIX: Uint8Array;
+    XML_DECLARATION: Uint8Array;
+    ENCODING: Uint8Array;
+    META: Uint8Array;
+    HTTP_EQUIV: Uint8Array;
+    CONTENT: Uint8Array;
+    CONTENT_TYPE: Uint8Array;
+    CHARSET: Uint8Array;
+    COMMENT_START: Uint8Array;
+    COMMENT_END: Uint8Array;
+} = {
     UTF8_BOM: new Uint8Array([0xef, 0xbb, 0xbf]),
     UTF16LE_BOM: new Uint8Array([0xff, 0xfe]),
     UTF16BE_BOM: new Uint8Array([0xfe, 0xff]),
@@ -145,7 +160,7 @@ const STRINGS = {
     CHARSET: toUint8Array("charset"),
     COMMENT_START: toUint8Array("<!--"),
     COMMENT_END: toUint8Array("-->"),
-} satisfies Record<string, Uint8Array>;
+};
 
 function isAsciiAlpha(c: number): boolean {
     return (
@@ -211,14 +226,14 @@ export class Sniffer {
                 this.encoding =
                     // Check if we are in a meta tag and the encoding is `x-user-defined`
                     type === ResultType.META_TAG &&
-                    encoding === "x-user-defined"
+                        encoding === "x-user-defined"
                         ? "windows-1252"
                         : // Check if we are in a meta tag or xml declaration, and the encoding is UTF-16
-                          (type === ResultType.META_TAG ||
-                                type === ResultType.XML_ENCODING) &&
+                        (type === ResultType.META_TAG ||
+                            type === ResultType.XML_ENCODING) &&
                             (encoding === "UTF-16LE" || encoding === "UTF-16BE")
-                          ? "UTF-8"
-                          : encoding;
+                            ? "UTF-8"
+                            : encoding;
 
                 this.resultType = type;
             }
@@ -400,7 +415,7 @@ export class Sniffer {
     private stateBeforeCloseTagName(c: number): void {
         this.state = isAsciiAlpha(c)
             ? // Switch to `TagNameOther`; the HTML spec allows attributes here as well.
-              State.TagNameOther
+            State.TagNameOther
             : State.WeirdTag;
     }
 
@@ -605,8 +620,8 @@ export class Sniffer {
                 this.attribType === AttribType.Content
                     ? State.MetaContentValueQuotedBeforeEncoding
                     : this.attribType === AttribType.HttpEquiv
-                      ? State.MetaAttribHttpEquivValue
-                      : State.AttributeValueQuoted;
+                        ? State.MetaAttribHttpEquivValue
+                        : State.AttributeValueQuoted;
         } else if (this.attribType === AttribType.Content) {
             this.state = State.MetaContentValueUnquotedBeforeEncoding;
             this.stateMetaContentValueUnquotedBeforeEncoding(c);
