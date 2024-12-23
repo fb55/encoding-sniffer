@@ -1108,9 +1108,10 @@ export class Sniffer {
 
                     break;
                 }
-                default: {
-                    // (State.AttributeValueUnquoted)
+                case State.AttributeValueUnquoted: {
                     this.stateAttributeValueUnquoted(c);
+
+                    break;
                 }
             }
         }
