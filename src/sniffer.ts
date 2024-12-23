@@ -938,7 +938,7 @@ export class Sniffer {
                     // Optimization: Skip all characters until we find a `<`
                     const idx = buffer.indexOf(Chars.LT, index);
 
-                    if (idx < 0) {
+                    if (idx === -1) {
                         // We are done with this buffer. Stay in the state and try on the next one.
                         index = buffer.length;
                     } else {
