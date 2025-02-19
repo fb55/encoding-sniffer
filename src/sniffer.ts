@@ -701,7 +701,7 @@ export class Sniffer {
             this.handleAttributeValue();
             this.state = State.BeforeTag;
         } else if (this.attribType === AttribType.Charset) {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -750,7 +750,7 @@ export class Sniffer {
             this.handleMetaContentValue();
             this.state = State.AttributeValueUnquoted;
         } else {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -760,7 +760,7 @@ export class Sniffer {
             this.state = State.AttributeValueUnquoted;
             this.stateAttributeValueUnquoted(c);
         } else {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -771,7 +771,7 @@ export class Sniffer {
             this.state = State.AttributeValueQuoted;
             this.stateAttributeValueQuoted(c);
         } else {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -787,7 +787,7 @@ export class Sniffer {
             this.state = State.AttributeValueQuoted;
             this.stateAttributeValueQuoted(c);
         } else {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -825,7 +825,7 @@ export class Sniffer {
             this.handleAttributeValue();
             this.state = State.BeforeAttribute;
         } else if (this.attribType === AttribType.Charset) {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
@@ -885,7 +885,7 @@ export class Sniffer {
         } else if (c <= Chars.SPACE) {
             this.state = State.WeirdTag;
         } else {
-            this.attributeValue.push(c | 0x20);
+            this.attributeValue.push(c | (c >= 0x41 && c <= 0x5a ? 0x20 : 0));
         }
     }
 
