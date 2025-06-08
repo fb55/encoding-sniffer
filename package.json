@@ -39,6 +39,8 @@
     "module": "./dist/esm/index.js",
     "types": "./dist/commonjs/index.d.ts",
     "files": [
+        "sniffer.js",
+        "sniffer.d.ts",
         "dist"
     ],
     "scripts": {
