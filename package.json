@@ -71,7 +71,7 @@
         "@types/whatwg-encoding": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^8.27.0",
         "@typescript-eslint/parser": "^8.33.1",
-        "@vitest/coverage-v8": "^2.1.8",
+        "@vitest/coverage-v8": "^4.0.9",
         "eslint": "^8.57.1",
         "eslint-config-prettier": "^10.1.5",
         "eslint-plugin-n": "^17.19.0",
@@ -80,7 +80,7 @@
         "tshy": "^3.0.2",
         "typedoc": "^0.28.5",
         "typescript": "^5.8.3",
-        "vitest": "^2.0.2"
+        "vitest": "^4.0.9"
     },
     "tshy": {
         "exports": {
