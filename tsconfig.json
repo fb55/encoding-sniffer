@@ -21,5 +21,6 @@
         "noPropertyAccessFromIndexSignature": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true
-    }
+    },
+    "exclude": ["sniffer.d.ts"]
 }
