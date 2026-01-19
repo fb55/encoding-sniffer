@@ -83,7 +83,6 @@ export class DecodeStream extends Transform {
         return this.decoder;
     }
 
-
     override _flush(callback: TransformCallback): void {
         const decoder = this.getDecoder();
         // Flush any remaining bytes
