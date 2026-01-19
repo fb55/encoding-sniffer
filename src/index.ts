@@ -1,5 +1,6 @@
 import { Transform, type TransformCallback } from "node:stream";
-import iconv from "iconv-lite";
+// eslint-disable-next-line n/no-missing-import
+import { TextDecoder } from "@exodus/bytes/encoding.js";
 import type { SnifferOptions } from "./sniffer.js";
 import { Sniffer, getEncoding } from "./sniffer.js";
 
@@ -14,22 +15,23 @@ export function decodeBuffer(
     buffer: Buffer,
     options: SnifferOptions = {},
 ): string {
-    return iconv.decode(buffer, getEncoding(buffer, options));
+    const encoding = getEncoding(buffer, options);
+    const decoder = new TextDecoder(encoding);
+    return decoder.decode(buffer);
 }
 
 /**
  * Decodes a stream of buffers into a stream of strings.
  *
  * Reads the first 1024 bytes and passes them to the sniffer. Once an encoding
- * has been determined, it passes all data to iconv-lite's stream and outputs
- * the results.
+ * has been determined, it decodes all buffered data and outputs the results.
  */
 export class DecodeStream extends Transform {
     private readonly sniffer: Sniffer;
     private readonly buffers: Uint8Array[] = [];
-    /** The iconv decode stream. If it is set, we have read more than `options.maxBytes` bytes. */
-    private iconv: NodeJS.ReadWriteStream | null = null;
-    private readonly maxBytes;
+    /** The TextDecoder instance. If set, we have determined the encoding. */
+    private decoder: TextDecoder | null = null;
+    private readonly maxBytes: number;
     private readBytes = 0;
 
     constructor(options?: SnifferOptions) {
@@ -54,30 +56,41 @@ export class DecodeStream extends Transform {
             }
         }
 
-        this.getIconvStream().write(chunk, callback);
+        const decoder = this.getDecoder();
+        const decoded = decoder.decode(chunk, { stream: true });
+        if (decoded) {
+            this.push(decoded, "utf-8");
+        }
+        callback();
     }
 
-    private getIconvStream(): NodeJS.ReadWriteStream {
-        if (this.iconv) {
-            return this.iconv;
+    private getDecoder(): TextDecoder {
+        if (this.decoder) {
+            return this.decoder;
         }
 
-        const stream = iconv.decodeStream(this.sniffer.encoding);
-        stream.on("data", (chunk: string) => this.push(chunk, "utf-8"));
-        stream.on("end", () => this.push(null));
+        this.decoder = new TextDecoder(this.sniffer.encoding);
 
-        this.iconv = stream;
-
+        // Process all buffered chunks
         for (const buffer of this.buffers) {
-            stream.write(buffer);
+            const decoded = this.decoder.decode(buffer, { stream: true });
+            if (decoded) {
+                this.push(decoded, "utf-8");
+            }
         }
         this.buffers.length = 0;
 
-        return stream;
+        return this.decoder;
     }
 
     override _flush(callback: TransformCallback): void {
-        this.getIconvStream().end(callback);
+        const decoder = this.getDecoder();
+        // Flush any remaining bytes
+        const decoded = decoder.decode();
+        if (decoded) {
+            this.push(decoded, "utf-8");
+        }
+        callback();
     }
 }
 
