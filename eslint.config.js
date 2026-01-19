@@ -14,7 +14,7 @@ export default tseslint.config(
             "docs/",
             "dist/",
             ".tshy/",
-            "sniffer.js",
+            "sniffer.(js|.d.ts)",
         ],
     },
     eslint.configs.recommended,
