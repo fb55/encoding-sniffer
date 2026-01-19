@@ -62,6 +62,9 @@
         "proseWrap": "always",
         "tabWidth": 4
     },
+    "dependencies": {
+        "@exodus/bytes": "^1.9.0"
+    },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "@types/node": "^25.0.9",
@@ -86,8 +89,5 @@
         "exclude": [
             "src/**/*.spec.ts"
         ]
-    },
-    "dependencies": {
-        "@exodus/bytes": "^1.9.0"
     }
 }
