@@ -50,7 +50,7 @@
         "format:es": "npm run lint:es -- --fix",
         "format:prettier": "npm run prettier -- --write",
         "lint": "npm run lint:es && npm run lint:ts && npm run lint:prettier",
-        "lint:es": "eslint --ignore-path .gitignore .",
+        "lint:es": "eslint .",
         "lint:prettier": "npm run prettier -- --check",
         "lint:ts": "tsc --noEmit",
         "prepublishOnly": "npm run build",
@@ -67,20 +67,21 @@
         "whatwg-encoding": "^3.1.1"
     },
     "devDependencies": {
-        "@types/node": "^22.15.30",
+        "@eslint/js": "^9.39.2",
+        "@types/node": "^25.0.9",
         "@types/whatwg-encoding": "^2.0.3",
-        "@typescript-eslint/eslint-plugin": "^8.27.0",
-        "@typescript-eslint/parser": "^8.33.1",
-        "@vitest/coverage-v8": "^2.1.8",
-        "eslint": "^8.57.1",
-        "eslint-config-prettier": "^10.1.5",
-        "eslint-plugin-n": "^17.19.0",
-        "eslint-plugin-unicorn": "^56.0.1",
-        "prettier": "^3.5.3",
-        "tshy": "^3.0.2",
-        "typedoc": "^0.28.5",
-        "typescript": "^5.8.3",
-        "vitest": "^2.0.2"
+        "@vitest/coverage-v8": "^4.0.17",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-n": "^17.23.2",
+        "eslint-plugin-unicorn": "^62.0.0",
+        "globals": "^17.0.0",
+        "prettier": "^3.8.0",
+        "tshy": "^3.1.0",
+        "typedoc": "^0.28.16",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.53.0",
+        "vitest": "^4.0.17"
     },
     "tshy": {
         "exports": {

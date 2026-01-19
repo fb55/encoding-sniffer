@@ -645,10 +645,10 @@ export class Sniffer {
                     ? END_OF_UNQUOTED_ATTRIBUTE_VALUE.has(c)
                     : c === this.quoteCharacter
             ) {
-                if (this.needsPragma !== null) {
+                if (this.needsPragma === null) {
+                    this.gotPragma ??= true;
+                } else {
                     this.setResult(this.needsPragma, ResultType.META_TAG);
-                } else if (this.gotPragma === null) {
-                    this.gotPragma = true;
                 }
 
                 this.state = State.BeforeAttribute;
@@ -676,9 +676,9 @@ export class Sniffer {
 
         if (this.gotPragma) {
             this.setResult(encoding, ResultType.META_TAG);
-        } else if (this.needsPragma === null) {
+        } else {
             // Don't override a previous result.
-            this.needsPragma = encoding;
+            this.needsPragma ??= encoding;
         }
 
         this.attributeValue.length = 0;
