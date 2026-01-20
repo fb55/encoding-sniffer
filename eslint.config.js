@@ -57,11 +57,11 @@ export default tseslint.config(
     },
     {
         files: ["**/*.ts"],
+        ignores: ["**/*.spec.ts"],
         extends: [...tseslint.configs.recommended],
         languageOptions: {
             parserOptions: {
                 projectService: true,
-                tsconfigRootDir: import.meta.dirname,
             },
         },
         rules: {
