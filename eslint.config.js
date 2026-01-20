@@ -7,7 +7,7 @@ import globals from "globals";
 
 export default tseslint.config(
     {
-        ignores: ["node_modules/", "coverage/", "lib/", "docs/", "dist/"],
+        ignores: ["node_modules/", "coverage/", "docs/", "dist/"],
     },
     eslint.configs.recommended,
     unicorn.configs.recommended,
