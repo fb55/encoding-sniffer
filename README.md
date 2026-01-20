@@ -1,6 +1,6 @@
 # encoding-sniffer [![Node.js CI](https://github.com/fb55/encoding-sniffer/actions/workflows/nodejs-test.yml/badge.svg)](https://github.com/fb55/encoding-sniffer/actions/workflows/nodejs-test.yml)
 
-An implementation of the HTML Standard's [encoding sniffing algorithm](HTML Standard's encoding sniffing algorithm), with stream support.
+An implementation of the HTML Standard's [encoding sniffing algorithm](https://html.spec.whatwg.org/multipage/syntax.html#encoding-sniffing-algorithm), with stream support.
 
 This module wraps around [@exodus/bytes]([https://github.com/ashtuchkin/iconv-lite](https://github.com/ExodusOSS/bytes))
 to make decoding buffers and streams incredibly easy.
