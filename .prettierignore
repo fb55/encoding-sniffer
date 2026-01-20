@@ -1,4 +1,6 @@
 node_modules/
 coverage/
 lib/
+dist/
+docs/
 package-lock.json

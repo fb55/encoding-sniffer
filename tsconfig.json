@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
         /* Basic Options */
-        "target": "ES2015",
-        "module": "node16",
+        "target": "ES2022",
+        "module": "node20",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
-        "outDir": "lib",
+        "outDir": "dist",
 
         /* Strict Type-Checking Options */
         "strict": true,
@@ -22,5 +22,5 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },
-    "exclude": ["sniffer.d.ts"]
+    "exclude": ["**/*.spec.ts", "dist"]
 }
