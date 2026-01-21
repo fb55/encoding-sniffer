@@ -7,15 +7,7 @@ import globals from "globals";
 
 export default tseslint.config(
     {
-        ignores: [
-            "node_modules/",
-            "coverage/",
-            "lib/",
-            "docs/",
-            "dist/",
-            ".tshy/",
-            "sniffer.{js,d.ts}",
-        ],
+        ignores: ["node_modules/", "coverage/", "docs/", "dist/"],
     },
     eslint.configs.recommended,
     unicorn.configs.recommended,
@@ -30,7 +22,7 @@ export default tseslint.config(
         },
         settings: {
             node: {
-                version: ">=22.16.0",
+                version: ">=20.11.0",
             },
         },
         rules: {
@@ -65,11 +57,11 @@ export default tseslint.config(
     },
     {
         files: ["**/*.ts"],
+        ignores: ["**/*.spec.ts"],
         extends: [...tseslint.configs.recommended],
         languageOptions: {
             parserOptions: {
                 projectService: true,
-                tsconfigRootDir: import.meta.dirname,
             },
         },
         rules: {
