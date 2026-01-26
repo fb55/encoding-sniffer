@@ -63,7 +63,7 @@
         "tabWidth": 4
     },
     "dependencies": {
-        "@exodus/bytes": "^1.9.0"
+        "@exodus/bytes": "^1.10.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
