@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { Sniffer, ResultType, STRINGS } from "./sniffer.js";
+import { describe, expect, it } from "vitest";
+import { ResultType, Sniffer, STRINGS } from "./sniffer.js";
 
 const XML_ENCODING = "<?xml encoding='utf-16'>";
 const META_CONTENT =
