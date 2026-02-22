@@ -2,7 +2,7 @@ import { labelToName } from "@exodus/bytes/encoding.js";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#prescan-a-byte-stream-to-determine-its-encoding
 
-enum State {
+const enum State {
     // Before anything starts; can be any of BOM, UTF-16 XML declarations or meta tags
     Begin,
     // Inside of a BOM
@@ -84,14 +84,14 @@ export enum ResultType {
     DEFAULT = 5,
 }
 
-enum AttribType {
+const enum AttribType {
     None,
     HttpEquiv,
     Content,
     Charset,
 }
 
-enum Chars {
+const enum Chars {
     NIL = 0x00,
     TAB = 0x09,
     LF = 0x0a,
