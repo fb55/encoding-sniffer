@@ -1,8 +1,8 @@
 import { Transform, type TransformCallback } from "node:stream";
-// eslint-disable-next-line n/no-missing-import
+
 import { TextDecoder } from "@exodus/bytes/encoding.js";
 import type { SnifferOptions } from "./sniffer.js";
-import { Sniffer, getEncoding } from "./sniffer.js";
+import { getEncoding, Sniffer } from "./sniffer.js";
 
 /**
  * Sniff the encoding of a buffer, then decode it.
@@ -94,4 +94,4 @@ export class DecodeStream extends Transform {
     }
 }
 
-export { type SnifferOptions, getEncoding } from "./sniffer.js";
+export { getEncoding, type SnifferOptions } from "./sniffer.js";

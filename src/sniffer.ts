@@ -1,4 +1,3 @@
-// eslint-disable-next-line n/no-missing-import
 import { labelToName } from "@exodus/bytes/encoding.js";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#prescan-a-byte-stream-to-determine-its-encoding
