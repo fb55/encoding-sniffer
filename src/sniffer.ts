@@ -69,6 +69,7 @@ const enum State {
     AttributeValueUnquoted,
 }
 
+/** Source used to determine the final sniffed encoding. */
 export enum ResultType {
     // Byte order mark
     BOM = 0,
@@ -130,6 +131,7 @@ function toUint8Array(str: string): Uint8Array {
     return arr;
 }
 
+/** Byte sequences used while sniffing and parsing metadata. */
 export const STRINGS: {
     UTF8_BOM: Uint8Array;
     UTF16LE_BOM: Uint8Array;
@@ -173,6 +175,7 @@ function isQuote(c: number): boolean {
     return c === Chars.DQUOTE || c === Chars.SQUOTE;
 }
 
+/** Configuration for the incremental encoding sniffer. */
 export interface SnifferOptions {
     /**
      * The maximum number of bytes to sniff.
@@ -196,6 +199,7 @@ export interface SnifferOptions {
     defaultEncoding?: string;
 }
 
+/** Incremental HTML encoding sniffer following the WHATWG algorithm. */
 export class Sniffer {
     /** The maximum number of bytes to sniff. */
     private readonly maxBytes: number;
