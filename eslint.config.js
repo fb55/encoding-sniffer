@@ -26,7 +26,7 @@ export default defineConfig(
         },
         settings: {
             node: {
-                version: ">=22.16.0",
+                version: "^20.11.0 || ^21.2.0 || >=22.16.0",
             },
         },
         rules: {
