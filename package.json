@@ -12,6 +12,7 @@
     "funding": "https://github.com/fb55/encoding-sniffer?sponsor=1",
     "license": "MIT",
     "author": "Felix Boehm <me@feedic.com>",
+    "sideEffects": false,
     "type": "module",
     "exports": {
         ".": {
@@ -46,35 +47,28 @@
     "scripts": {
         "build": "tshy",
         "build:docs": "typedoc --hideGenerator src/index.ts",
-        "format": "npm run format:es && npm run format:prettier",
+        "format": "npm run format:es && npm run format:biome",
+        "format:biome": "biome check --write .",
         "format:es": "npm run lint:es -- --fix",
-        "format:prettier": "npm run prettier -- --write",
-        "lint": "npm run lint:es && npm run lint:ts && npm run lint:prettier",
+        "lint": "npm run lint:es && npm run lint:ts && npm run lint:biome",
+        "lint:biome": "biome check .",
         "lint:es": "eslint .",
-        "lint:prettier": "npm run prettier -- --check",
         "lint:ts": "tsc --noEmit",
         "prepublishOnly": "npm run build",
-        "prettier": "prettier '**/*.{ts,md,json,yml}'",
         "test": "npm run test:vi && npm run lint",
         "test:vi": "vitest run"
-    },
-    "prettier": {
-        "proseWrap": "always",
-        "tabWidth": 4
     },
     "dependencies": {
         "@exodus/bytes": "^1.14.1"
     },
     "devDependencies": {
-        "@eslint/js": "^9.39.2",
+        "@biomejs/biome": "^2.4.4",
+        "@feedic/eslint-config": "^0.2.2",
         "@types/node": "^25.3.0",
         "@vitest/coverage-v8": "^4.0.18",
-        "eslint": "^9.39.2",
+        "eslint": "^10.0.1",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-n": "^17.24.0",
-        "eslint-plugin-unicorn": "^62.0.0",
         "globals": "^17.3.0",
-        "prettier": "^3.8.1",
         "tshy": "^3.3.2",
         "typedoc": "^0.28.17",
         "typescript": "^5.9.3",

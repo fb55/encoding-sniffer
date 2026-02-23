@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { DecodeStream } from "./index.js";
-import { readdirSync, createReadStream, promises as fs } from "node:fs";
+import { createReadStream, promises as fs, readdirSync } from "node:fs";
 import path from "node:path";
 import { setTimeout } from "node:timers/promises";
+import { describe, expect, it } from "vitest";
+import { DecodeStream } from "./index.js";
 
 function getStream(stream: NodeJS.ReadableStream): Promise<string> {
     // TODO[engines.node@>=18]: Use `reduce`

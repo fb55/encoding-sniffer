@@ -1,4 +1,3 @@
-// eslint-disable-next-line n/no-missing-import
 import { labelToName } from "@exodus/bytes/encoding.js";
 
 // https://html.spec.whatwg.org/multipage/syntax.html#prescan-a-byte-stream-to-determine-its-encoding
@@ -70,6 +69,7 @@ const enum State {
     AttributeValueUnquoted,
 }
 
+/** Source used to determine the final sniffed encoding. */
 export enum ResultType {
     // Byte order mark
     BOM = 0,
@@ -123,14 +123,15 @@ const END_OF_UNQUOTED_ATTRIBUTE_VALUE = new Set([
     Chars.GT,
 ]);
 
-function toUint8Array(str: string): Uint8Array {
-    const arr = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) {
-        arr[i] = str.charCodeAt(i);
+function toUint8Array(inputString: string): Uint8Array {
+    const array = new Uint8Array(inputString.length);
+    for (let index = 0; index < inputString.length; index++) {
+        array[index] = inputString.charCodeAt(index);
     }
-    return arr;
+    return array;
 }
 
+/** Byte sequences used while sniffing and parsing metadata. */
 export const STRINGS: {
     UTF8_BOM: Uint8Array;
     UTF16LE_BOM: Uint8Array;
@@ -174,10 +175,10 @@ function isQuote(c: number): boolean {
     return c === Chars.DQUOTE || c === Chars.SQUOTE;
 }
 
+/** Configuration for the incremental encoding sniffer. */
 export interface SnifferOptions {
     /**
      * The maximum number of bytes to sniff.
-     *
      * @default 1024
      */
     maxBytes?: number;
@@ -191,12 +192,12 @@ export interface SnifferOptions {
     transportLayerEncodingLabel?: string;
     /**
      * The default encoding to use.
-     *
      * @default "windows-1252"
      */
     defaultEncoding?: string;
 }
 
+/** Incremental HTML encoding sniffer following the WHATWG algorithm. */
 export class Sniffer {
     /** The maximum number of bytes to sniff. */
     private readonly maxBytes: number;
@@ -378,7 +379,7 @@ export class Sniffer {
      *  - A closing tag
      *  - `<!--`
      *  - An XML declaration
-     *
+     * @param c Current character code point.
      */
     private stateBeforeTagName(c: number): void {
         if (isAsciiAlpha(c)) {
@@ -449,6 +450,7 @@ export class Sniffer {
 
     /**
      * Any section starting with `<!`, `<?`, `</`, without being a closing tag or comment.
+     * @param c Current character code point.
      */
     private stateWeirdTag(c: number): void {
         if (c === Chars.GT) {
@@ -460,7 +462,8 @@ export class Sniffer {
      * Advances the section, ignoring upper/lower case.
      *
      * Make sure the section has left-over characters before calling.
-     *
+     * @param section Current section of the encoding state machine.
+     * @param c Current character code point.
      * @returns `false` if we did not match the section.
      */
     private advanceSectionIC(section: Uint8Array, c: number): boolean {
@@ -471,7 +474,8 @@ export class Sniffer {
      * Advances the section.
      *
      * Make sure the section has left-over characters before calling.
-     *
+     * @param section Current section of the encoding state machine.
+     * @param c Current character code point.
      * @returns `false` if we did not match the section.
      */
     private advanceSection(section: Uint8Array, c: number): boolean {
@@ -937,13 +941,13 @@ export class Sniffer {
                 }
                 case State.BeforeTag: {
                     // Optimization: Skip all characters until we find a `<`
-                    const idx = buffer.indexOf(Chars.LT, index);
+                    const nextIndex = buffer.indexOf(Chars.LT, index);
 
-                    if (idx === -1) {
+                    if (nextIndex === -1) {
                         // We are done with this buffer. Stay in the state and try on the next one.
                         index = buffer.length;
                     } else {
-                        index = idx;
+                        index = nextIndex;
                         this.stateBeforeTag(Chars.LT);
                     }
 
@@ -1121,7 +1125,11 @@ export class Sniffer {
     }
 }
 
-/** Get the encoding for the passed buffer. */
+/**
+ * Get the encoding for the passed buffer.
+ * @param buffer Input bytes to inspect.
+ * @param options Options that control this operation.
+ */
 export function getEncoding(
     buffer: Uint8Array,
     options?: SnifferOptions,
