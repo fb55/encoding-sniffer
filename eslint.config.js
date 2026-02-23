@@ -30,7 +30,6 @@ export default defineConfig(
             },
         },
         rules: {
-            "unicorn/prevent-abbreviations": "off",
             "unicorn/text-encoding-identifier-case": "off",
         },
     },

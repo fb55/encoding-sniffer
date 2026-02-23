@@ -6,7 +6,6 @@ import { getEncoding, Sniffer } from "./sniffer.js";
 
 /**
  * Sniff the encoding of a buffer, then decode it.
- *
  * @param buffer Buffer to be decoded
  * @param options Options for the sniffer
  * @returns The decoded buffer
