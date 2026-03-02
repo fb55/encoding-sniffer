@@ -68,7 +68,7 @@
         "@vitest/coverage-v8": "^4.0.18",
         "eslint": "^10.0.2",
         "eslint-config-prettier": "^10.1.8",
-        "globals": "^17.3.0",
+        "globals": "^17.4.0",
         "tshy": "^3.3.2",
         "typedoc": "^0.28.17",
         "typescript": "^5.9.3",
