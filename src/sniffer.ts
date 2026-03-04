@@ -217,8 +217,8 @@ export class Sniffer {
 
     private inMetaTag = false;
 
-    public encoding = "windows-1252";
-    public resultType: ResultType = ResultType.DEFAULT;
+    encoding = "windows-1252";
+    resultType: ResultType = ResultType.DEFAULT;
 
     private setResult(label: string, type: ResultType): void {
         if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
@@ -523,7 +523,8 @@ export class Sniffer {
                 this.sectionIndex = 1;
                 this.state = State.MetaAttribHttpEquiv;
                 return;
-            } else if (lower === STRINGS.CHARSET[0]) {
+            }
+            if (lower === STRINGS.CHARSET[0]) {
                 this.sectionIndex = 1;
                 this.state = State.MetaAttribC;
                 return;
@@ -894,7 +895,7 @@ export class Sniffer {
         }
     }
 
-    public write(buffer: Uint8Array): void {
+    write(buffer: Uint8Array): void {
         let index = 0;
         for (
             ;

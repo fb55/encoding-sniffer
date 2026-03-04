@@ -349,7 +349,7 @@ for (const utf16Encoding of ["utf-16be", "utf-16", "utf-16le"]) {
 }
 
 describe("A file with a BOM and a <meta charset> of x-user-defined", () => {
-    const buffer = read(`no-bom-charset-x-user-defined.html`);
+    const buffer = read("no-bom-charset-x-user-defined.html");
 
     it("should sniff as windows-1252, given no options", () => {
         const sniffedEncoding = htmlEncodingSniffer(buffer);
