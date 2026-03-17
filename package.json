@@ -30,7 +30,9 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "src",
+        "!**/*.spec.ts"
     ],
     "scripts": {
         "build": "tsc",
