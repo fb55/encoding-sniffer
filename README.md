@@ -64,6 +64,11 @@ const encoding = getEncoding(buffer, options);
 const decodedBuffer = decodeBuffer(buffer, options);
 ```
 
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
+Tidelift will coordinate the fix and disclosure.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](/LICENSE) file
