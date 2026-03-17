@@ -1,17 +1,16 @@
 {
     "compilerOptions": {
-        /* Basic Options */
-        "target": "ES2015",
-        "module": "node16",
+        "target": "es2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
-        "outDir": "lib",
+        "rootDir": "src",
+        "outDir": "dist",
 
-        /* Strict Type-Checking Options */
         "strict": true,
 
-        /* Additional Checks */
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "isolatedDeclarations": true,
@@ -22,5 +21,11 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },
-    "exclude": ["sniffer.d.ts"]
+    "include": ["src"],
+    "exclude": [
+        "**/*.spec.ts",
+        "**/__fixtures__/*",
+        "**/__tests__/*",
+        "**/__snapshots__/*"
+    ]
 }

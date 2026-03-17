@@ -1,6 +1,5 @@
 node_modules/
 coverage/
-lib/
-docs/
 dist/
-.tshy/
+docs/
+jsr.json
