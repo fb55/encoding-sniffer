@@ -1,6 +1,6 @@
 import { commonTypeScriptRules } from "@feedic/eslint-config/typescript";
 import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier";
+import eslintConfigBiome from "eslint-config-biome";
 import globals from "globals";
 import feedicFlatConfig from "@feedic/eslint-config";
 import { defineConfig } from "eslint/config";
@@ -10,11 +10,9 @@ export default defineConfig(
         ignores: [
             "node_modules/",
             "coverage/",
-            "lib/",
-            "docs/",
             "dist/",
-            ".tshy/",
-            "sniffer.{js,d.ts}",
+            "docs/",
+            "jsr.json",
         ],
     },
     ...feedicFlatConfig,
@@ -26,7 +24,7 @@ export default defineConfig(
         },
         settings: {
             node: {
-                version: "^20.11.0 || ^21.2.0 || >=22.16.0",
+                version: ">=20.19.0",
             },
         },
         rules: {
@@ -39,8 +37,8 @@ export default defineConfig(
         languageOptions: {
             parser: tseslint.parser,
             parserOptions: {
-                projectService: true,
-                tsconfigRootDir: import.meta.dirname,
+                sourceType: "module",
+                project: "./tsconfig.eslint.json",
             },
         },
         rules: {
@@ -49,5 +47,5 @@ export default defineConfig(
             "@typescript-eslint/no-unnecessary-condition": "error",
         },
     },
-    eslintConfigPrettier,
+    eslintConfigBiome,
 );
