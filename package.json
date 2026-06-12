@@ -52,7 +52,7 @@
         "@exodus/bytes": "^1.15.1"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.4.16",
+        "@biomejs/biome": "^2.5.0",
         "@feedic/eslint-config": "^0.4.1",
         "@types/node": "^25.9.3",
         "eslint": "^10.4.1",
