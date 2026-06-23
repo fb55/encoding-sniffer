@@ -26,7 +26,8 @@ describe("DecodeStream", () => {
     });
 
     describe("Fixtures", () => {
-        for (const file of readdirSync(path.join(__dirname, "__fixtures__"))) {
+        const fixtureFiles = readdirSync(path.join(__dirname, "__fixtures__"));
+        for (const file of fixtureFiles) {
             if (!file.endsWith(".html")) continue;
 
             it(`should decode ${file}`, async () => {

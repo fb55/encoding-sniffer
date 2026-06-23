@@ -39,6 +39,25 @@ export class DecodeStream extends Transform {
         this.maxBytes = options?.maxBytes ?? 1024;
     }
 
+    private getDecoder(): TextDecoder {
+        if (this.decoder) {
+            return this.decoder;
+        }
+
+        this.decoder = new TextDecoder(this.sniffer.encoding);
+
+        // Process all buffered chunks
+        for (const buffer of this.buffers) {
+            const decoded = this.decoder.decode(buffer, { stream: true });
+            if (decoded) {
+                this.push(decoded, "utf-8");
+            }
+        }
+        this.buffers.length = 0;
+
+        return this.decoder;
+    }
+
     override _transform(
         chunk: Uint8Array,
         _encoding: string,
@@ -61,25 +80,6 @@ export class DecodeStream extends Transform {
             this.push(decoded, "utf-8");
         }
         callback();
-    }
-
-    private getDecoder(): TextDecoder {
-        if (this.decoder) {
-            return this.decoder;
-        }
-
-        this.decoder = new TextDecoder(this.sniffer.encoding);
-
-        // Process all buffered chunks
-        for (const buffer of this.buffers) {
-            const decoded = this.decoder.decode(buffer, { stream: true });
-            if (decoded) {
-                this.push(decoded, "utf-8");
-            }
-        }
-        this.buffers.length = 0;
-
-        return this.decoder;
     }
 
     override _flush(callback: TransformCallback): void {
