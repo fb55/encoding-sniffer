@@ -216,31 +216,11 @@ export class Sniffer {
     private needsPragma: string | null = null;
 
     private inMetaTag = false;
+    private quoteCharacter = 0;
+    private readonly attributeValue: number[] = [];
 
     encoding = "windows-1252";
     resultType: ResultType = ResultType.DEFAULT;
-
-    private setResult(label: string, type: ResultType): void {
-        if (this.resultType === ResultType.DEFAULT || this.resultType > type) {
-            const encoding = labelToName(label);
-
-            if (encoding) {
-                this.encoding =
-                    // Check if we are in a meta tag and the encoding is `x-user-defined`
-                    type === ResultType.META_TAG &&
-                    encoding === "x-user-defined"
-                        ? "windows-1252"
-                        : // Check if we are in a meta tag or xml declaration, and the encoding is UTF-16
-                          (type === ResultType.META_TAG ||
-                                type === ResultType.XML_ENCODING) &&
-                            (encoding === "UTF-16LE" || encoding === "UTF-16BE")
-                          ? "UTF-8"
-                          : encoding;
-
-                this.resultType = type;
-            }
-        }
-    }
 
     constructor({
         maxBytes = 1024,
@@ -259,6 +239,31 @@ export class Sniffer {
 
         if (defaultEncoding) {
             this.setResult(defaultEncoding, ResultType.DEFAULT);
+        }
+    }
+
+    private setResult(label: string, type: ResultType): void {
+        if (
+            !(this.resultType === ResultType.DEFAULT || this.resultType > type)
+        ) {
+            return;
+        }
+
+        const encoding = labelToName(label);
+
+        if (encoding) {
+            this.encoding =
+                // Check if we are in a meta tag and the encoding is `x-user-defined`
+                type === ResultType.META_TAG && encoding === "x-user-defined"
+                    ? "windows-1252"
+                    : // Check if we are in a meta tag or xml declaration, and the encoding is UTF-16
+                      (type === ResultType.META_TAG ||
+                            type === ResultType.XML_ENCODING) &&
+                        (encoding === "UTF-16LE" || encoding === "UTF-16BE")
+                      ? "UTF-8"
+                      : encoding;
+
+            this.resultType = type;
         }
     }
 
@@ -364,10 +369,12 @@ export class Sniffer {
     }
 
     private stateBeforeTag(c: number): void {
-        if (c === Chars.LT) {
-            this.state = State.BeforeTagName;
-            this.inMetaTag = false;
+        if (c !== Chars.LT) {
+            return;
         }
+
+        this.state = State.BeforeTagName;
+        this.inMetaTag = false;
     }
 
     /**
@@ -610,9 +617,6 @@ export class Sniffer {
             this.stateBeforeAttribute(c);
         }
     }
-
-    private quoteCharacter = 0;
-    private readonly attributeValue: number[] = [];
 
     private stateBeforeAttributeValue(c: number): void {
         if (SPACE_CHARACTERS.has(c)) return;
@@ -908,36 +912,43 @@ export class Sniffer {
                 case State.Begin: {
                     this.stateBegin(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BOM16BE: {
                     this.stateBOM16BE(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BOM16LE: {
                     this.stateBOM16LE(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BOM8: {
                     this.stateBOM8(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.UTF16LE_XML_PREFIX: {
                     this.stateUTF16LE_XML_PREFIX(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeginLT: {
                     this.stateBeginLT(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.UTF16BE_XML_PREFIX: {
                     this.stateUTF16BE_XML_PREFIX(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeforeTag: {
@@ -952,171 +963,205 @@ export class Sniffer {
                         this.stateBeforeTag(Chars.LT);
                     }
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeforeTagName: {
                     this.stateBeforeTagName(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeforeCloseTagName: {
                     this.stateBeforeCloseTagName(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.CommentStart: {
                     this.stateCommentStart(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.CommentEnd: {
                     this.stateCommentEnd(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.TagNameMeta: {
                     this.stateTagNameMeta(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.TagNameOther: {
                     this.stateTagNameOther(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.XMLDeclaration: {
                     this.stateXMLDeclaration(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.XMLDeclarationBeforeEncoding: {
                     this.stateXMLDeclarationBeforeEncoding(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.XMLDeclarationAfterEncoding: {
                     this.stateXMLDeclarationAfterEncoding(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.XMLDeclarationBeforeValue: {
                     this.stateXMLDeclarationBeforeValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.XMLDeclarationValue: {
                     this.stateXMLDeclarationValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.WeirdTag: {
                     this.stateWeirdTag(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeforeAttribute: {
                     this.stateBeforeAttribute(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribHttpEquiv: {
                     this.stateMetaAttribHttpEquiv(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribHttpEquivValue: {
                     this.stateMetaAttribHttpEquivValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribC: {
                     this.stateMetaAttribC(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribContent: {
                     this.stateMetaAttribContent(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribCharset: {
                     this.stateMetaAttribCharset(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaAttribAfterName: {
                     this.stateMetaAttribAfterName(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueQuotedBeforeEncoding: {
                     this.stateMetaContentValueQuotedBeforeEncoding(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueQuotedAfterEncoding: {
                     this.stateMetaContentValueQuotedAfterEncoding(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueQuotedBeforeValue: {
                     this.stateMetaContentValueQuotedBeforeValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueQuotedValueQuoted: {
                     this.stateMetaContentValueQuotedValueQuoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueQuotedValueUnquoted: {
                     this.stateMetaContentValueQuotedValueUnquoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueUnquotedBeforeEncoding: {
                     this.stateMetaContentValueUnquotedBeforeEncoding(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueUnquotedBeforeValue: {
                     this.stateMetaContentValueUnquotedBeforeValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueUnquotedValueQuoted: {
                     this.stateMetaContentValueUnquotedValueQuoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.MetaContentValueUnquotedValueUnquoted: {
                     this.stateMetaContentValueUnquotedValueUnquoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.AnyAttribName: {
                     this.stateAnyAttribName(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.AfterAttributeName: {
                     this.stateAfterAttributeName(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.BeforeAttributeValue: {
                     this.stateBeforeAttributeValue(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.AttributeValueQuoted: {
                     this.stateAttributeValueQuoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
                 case State.AttributeValueUnquoted: {
                     this.stateAttributeValueUnquoted(c);
 
+                    // eslint-disable-next-line unicorn/no-break-in-nested-loop
                     break;
                 }
             }
